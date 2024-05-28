@@ -93,11 +93,13 @@
       border-radius: 5px;
       white-space: pre-wrap;
       word-wrap: break-word;
+      overflow-wrap: break-word;
       font-size: 1rem;
       font-family: 'Roboto', sans-serif;
       color: #333;
       width: 100%;
       overflow: auto;
+      max-width: 100%;
     }
     footer {
       background-color: #4caf50;
@@ -127,7 +129,7 @@
     </div>
   </main>
   <footer>
-    <p>с любовью для Практикума 💚</p>
+    <p>с любовью для Практикума 💙</p>
   </footer>
   <script>
     const form = document.querySelector('form');
@@ -156,7 +158,7 @@
 
       // Форматирование блоков <aside>
       const asideRegex = /<aside>\s*💡\s*(.*?)\s*<\/aside>/gs;
-      text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n    content\n    ${p1}\n{/quiz-task}`);
+      text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n    content: |\n    ${p1}\n{/quiz-task}`);
       
       return text;
     }
