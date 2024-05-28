@@ -166,15 +166,10 @@
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const text = form.text.value;
-      const formattedText = formatText(text);
+      const formattedText = formatText(removeDialogLines(text));
       const formattedDialog = formatDialog(text);
       
-      // Отображаем только отформатированный текст, если это не диалог
-      if (!formattedDialog) {
-        result.textContent = formattedText;
-      } else {
-        result.textContent = '';
-      }
+      result.textContent = formattedText;
 
       if (formattedDialog) {
         dialogOutput.textContent = formattedDialog;
@@ -215,7 +210,7 @@
     }
 
     function formatDialog(text) {
-      const dialogRegex = /^(Макс|Ульяна):\s*(.+)$/gm;
+      const dialogRegex = /(Макс|Ульяна):\s*(.+)/gm;
       const content = [];
       let match;
       while ((match = dialogRegex.exec(text)) !== null) {
@@ -230,6 +225,10 @@
         });
       }
       return content.length ? JSON.stringify({ content, type: 'Dialog' }, null, 2) : '';
+    }
+
+    function removeDialogLines(text) {
+      return text.replace(/^(Макс|Ульяна):\s*(.+)$/gm, '').trim();
     }
 
     function showNotification(message) {
