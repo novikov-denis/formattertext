@@ -215,7 +215,7 @@
     }
 
     function formatDialog(text) {
-      const dialogRegex = /(Макс|Ульяна):\s(.+?)(?=\n(Макс|Ульяна):|$)/gs;
+      const dialogRegex = /^(Макс|Ульяна):\s*(.+)$/gm;
       const content = [];
       let match;
       while ((match = dialogRegex.exec(text)) !== null) {
