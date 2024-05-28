@@ -170,9 +170,9 @@
       const formattedDialog = formatDialog(text);
       
       result.textContent = formattedText;
-      dialogOutput.textContent = formattedDialog;
 
       if (formattedDialog) {
+        dialogOutput.textContent = formattedDialog;
         dialogContainer.style.display = 'block';
       } else {
         dialogContainer.style.display = 'none';
@@ -210,13 +210,13 @@
     }
 
     function formatDialog(text) {
-      const dialogRegex = /(\w+):\s(.+?)(?=\n\w+:|$)/gs;
+      const dialogRegex = /(Макс|Ульяна):\s(.+?)(?=\n(Макс|Ульяна):|$)/gs;
       const content = [];
       let match;
       while ((match = dialogRegex.exec(text)) !== null) {
         const [_, character, message] = match;
+        const formattedCharacter = character === 'Макс' ? 'Max-new' : 'Ulyana';
         const formattedMessage = formatText(message.trim());
-        const formattedCharacter = character === 'Макс' ? 'Max-new' : character;
         content.push({
           side: 'left',
           type: 'text',
