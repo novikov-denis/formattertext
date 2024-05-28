@@ -76,9 +76,16 @@
     button:hover {
       background-color: #45a049;
     }
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 10px;
+    }
     .result-container p {
       font-weight: 500;
-      margin-bottom: 10px;
+      margin: 0;
     }
     .result pre {
       background: #f4f4f4;
@@ -89,6 +96,8 @@
       font-size: 1rem;
       font-family: 'Roboto', sans-serif;
       color: #333;
+      width: 100%;
+      overflow: auto;
     }
     footer {
       background-color: #4caf50;
@@ -110,9 +119,11 @@
       <button type="submit">Форматировать</button>
     </form>
     <div class="result-container">
-      <p>Здесь будет результат:</p>
+      <div class="result-header">
+        <p>Здесь будет результат:</p>
+        <button id="copy-button">Скопировать результат</button>
+      </div>
       <pre class="result">Прямо тут</pre>
-      <button id="copy-button">Скопировать результат</button>
     </div>
   </main>
   <footer>
@@ -145,7 +156,7 @@
 
       // Форматирование блоков <aside>
       const asideRegex = /<aside>\s*💡\s*(.*?)\s*<\/aside>/gs;
-      text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n        ${p1}\n{/quiz-task}`);
+      text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n    content\n    ${p1}\n{/quiz-task}`);
       
       return text;
     }
