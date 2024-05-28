@@ -48,6 +48,7 @@
       margin-bottom: 20px;
       width: 100%;
       max-width: 800px;
+      word-wrap: break-word;
     }
     form label {
       font-weight: 500;
@@ -176,7 +177,7 @@
 
       // Форматирование блоков <aside>
       const asideRegex = /<aside>\s*💡\s*(.*?)\s*<\/aside>/gs;
-      text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n    content: |\n    ${p1}\n{/quiz-task}`);
+      text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n        ${p1}\n{/quiz-task}`);
       
       return text;
     }
