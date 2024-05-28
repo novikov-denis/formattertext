@@ -2,12 +2,9 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Форматирование текста для платформы</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
   <style>
     * {
       box-sizing: border-box;
@@ -48,7 +45,6 @@
       margin-bottom: 20px;
       width: 100%;
       max-width: 800px;
-      word-wrap: break-word;
     }
     form label {
       font-weight: 500;
@@ -178,7 +174,7 @@
 
       // Форматирование блоков <aside>
       const asideRegex = /<aside>\s*💡\s*(.*?)\s*<\/aside>/gs;
-      text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n   content: |\n     ${p1}\n{/quiz-task}`);
+      text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n        ${p1}\n{/quiz-task}`);
       
       return text;
     }
