@@ -29,7 +29,7 @@
     }
     main {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr 1fr;
       gap: 20px;
       flex-grow: 1;
       padding: 20px;
@@ -53,6 +53,9 @@
       margin-bottom: 20px;
       font-size: 1.2em;
     }
+    .result p, form label span {
+      margin-bottom: 10px;
+    }
     textarea {
       padding: 15px;
       font-size: 1rem;
@@ -60,6 +63,7 @@
       line-height: 1.5;
       border: 1px solid #ccc;
       border-radius: 5px;
+      height: 200px;
     }
     .result {
       width: 100%;
@@ -119,7 +123,7 @@
     </div>
   </main>
   <footer>
-    <p></p>
+    <p>С любовью для Практикума</p>
   </footer>
   <script>
     const form = document.querySelector('form');
@@ -131,35 +135,15 @@
     });
     
     function formatText(text) {
-      let textArr = text.split('');
-      let insideFormula = false;
+      // Форматирование формул
+      const formulaRegex = /\$\$(.*?)\$\$/gs;
+      text = text.replace(formulaRegex, (match, p1) => `{formula}${p1}{/formula}`);
 
-      for (let i = 0; i < textArr.length; i++) {
-        if (textArr[i] === '$') {
-          if (insideFormula) {
-            textArr[i] = '{/formula}';
-            insideFormula = false;
-          } else {
-            textArr[i] = '{formula}';
-            insideFormula = true;
-          }
-        }
-      }
+      // Форматирование блоков <aside>
+      const asideRegex = /<aside>\s*💡\s*(.*?)\s*<\/aside>/gs;
+      text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n        ${p1}\n{/quiz-task}`);
       
-      return textArr.join('');
-    }
-
-    function isAlphaNumeric(str) {
-      var code, i, len;
-      for (i = 0, len = str.length; i < len; i++) {
-        code = str.charCodeAt(i);
-        if (!(code > 47 && code < 58) && // numeric (0-9)
-            !(code > 64 && code < 91) && // upper alpha (A-Z)
-            !(code > 96 && code < 123)) { // lower alpha (a-z)
-          return false;
-        }
-      }
-      return true;
+      return text;
     }
   </script>
 </body>
