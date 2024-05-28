@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Форматирование текста для платформы</title>
@@ -205,7 +206,7 @@
 
       // Форматирование блоков <aside>
       const asideRegex = /<aside>\s*💡\s*(.*?)\s*<\/aside>/gs;
-      text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n        ${p1}\n{/quiz-task}`);
+      text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n    content: |\n    ${p1}\n{/quiz-task}`);
       
       return text;
     }
