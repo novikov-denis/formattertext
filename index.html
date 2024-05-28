@@ -37,7 +37,7 @@
       padding: 20px;
       width: 100%;
     }
-    form, .result-container, .output-container, .dialog-container {
+    form, .result-container, .dialog-container {
       background: white;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       border-radius: 10px;
@@ -80,11 +80,11 @@
       width: 100%;
       margin-bottom: 10px;
     }
-    .result-container p, .output-container p, .dialog-container p {
+    .result-container p, .dialog-container p {
       font-weight: 500;
       margin: 0;
     }
-    .result pre, .output pre, .dialog pre {
+    .result pre, .dialog pre {
       background: #fff;
       padding: 15px;
       border-radius: 5px;
@@ -142,12 +142,11 @@
       </div>
       <pre class="result">Прямо тут</pre>
     </div>
-    <div class="output-container">
-      <p>Результат форматирования:</p>
-      <pre class="output">Здесь будет отформатированный текст</pre>
-    </div>
-    <div class="dialog-container">
-      <p>Форматированный диалог:</p>
+    <div class="dialog-container" style="display: none;">
+      <div class="result-header">
+        <p>Форматированный диалог:</p>
+        <button id="copy-dialog-button">Скопировать диалог</button>
+      </div>
       <pre class="dialog">Здесь будет форматированный диалог</pre>
     </div>
   </main>
@@ -158,23 +157,41 @@
   <script>
     const form = document.querySelector('form');
     const result = document.querySelector('.result');
-    const output = document.querySelector('.output');
+    const dialogContainer = document.querySelector('.dialog-container');
     const dialogOutput = document.querySelector('.dialog');
     const copyButton = document.getElementById('copy-button');
+    const copyDialogButton = document.getElementById('copy-dialog-button');
     const notification = document.getElementById('notification');
     
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const text = form.text.value;
-      result.textContent = formatText(text);
-      output.textContent = formatText(text);
-      dialogOutput.textContent = formatDialog(text);
+      const formattedText = formatText(text);
+      const formattedDialog = formatDialog(text);
+      
+      result.textContent = formattedText;
+      dialogOutput.textContent = formattedDialog;
+
+      if (formattedDialog) {
+        dialogContainer.style.display = 'block';
+      } else {
+        dialogContainer.style.display = 'none';
+      }
     });
 
     copyButton.addEventListener('click', () => {
-      const text = output.textContent;
+      const text = result.textContent;
       navigator.clipboard.writeText(text).then(() => {
-        showNotification();
+        showNotification('Результат скопирован в буфер обмена');
+      }, (err) => {
+        console.error('Ошибка при копировании: ', err);
+      });
+    });
+
+    copyDialogButton.addEventListener('click', () => {
+      const text = dialogOutput.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        showNotification('Диалог скопирован в буфер обмена');
       }, (err) => {
         console.error('Ошибка при копировании: ', err);
       });
@@ -206,10 +223,11 @@
           character: formattedCharacter
         });
       }
-      return JSON.stringify({ content, type: 'Dialog' }, null, 2);
+      return content.length ? JSON.stringify({ content, type: 'Dialog' }, null, 2) : '';
     }
 
-    function showNotification() {
+    function showNotification(message) {
+      notification.textContent = message;
       notification.style.display = 'block';
       setTimeout(() => {
         notification.style.display = 'none';
