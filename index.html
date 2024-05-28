@@ -37,7 +37,7 @@
       padding: 20px;
       width: 100%;
     }
-    form, .result-container {
+    form, .result-container, .output-container {
       background: white;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       border-radius: 10px;
@@ -80,11 +80,11 @@
       width: 100%;
       margin-bottom: 10px;
     }
-    .result-container p {
+    .result-container p, .output-container p {
       font-weight: 500;
       margin: 0;
     }
-    .result pre {
+    .result pre, .output pre {
       background: #f4f4f4;
       padding: 15px;
       border-radius: 5px;
@@ -99,6 +99,7 @@
       overflow: auto;
       box-sizing: border-box;
       margin: 0;
+      max-height: 200px;
     }
     .notification {
       position: fixed;
@@ -141,6 +142,10 @@
       </div>
       <pre class="result">Прямо тут</pre>
     </div>
+    <div class="output-container">
+      <p>Результат форматирования:</p>
+      <pre class="output">Здесь будет отформатированный текст</pre>
+    </div>
   </main>
   <footer>
     <p>Автор – <a href="https://t.me/novikovdenis" target="_blank">@novikovdenis</a> 💚 для Практикума с любовью</p>
@@ -149,6 +154,7 @@
   <script>
     const form = document.querySelector('form');
     const result = document.querySelector('.result');
+    const output = document.querySelector('.output');
     const copyButton = document.getElementById('copy-button');
     const notification = document.getElementById('notification');
     
@@ -156,10 +162,11 @@
       e.preventDefault();
       const text = form.text.value;
       result.textContent = formatText(text);
+      output.textContent = formatText(text);
     });
 
     copyButton.addEventListener('click', () => {
-      const text = result.textContent;
+      const text = output.textContent;
       navigator.clipboard.writeText(text).then(() => {
         showNotification();
       }, (err) => {
@@ -174,7 +181,7 @@
 
       // Форматирование блоков <aside>
       const asideRegex = /<aside>\s*💡\s*(.*?)\s*<\/aside>/gs;
-      text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n        ${p1}\n{/quiz-task}`);
+      text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n    content: |\n    ${p1}\n{/quiz-task}`);
       
       return text;
     }
