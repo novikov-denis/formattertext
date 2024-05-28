@@ -81,9 +81,6 @@
       width: 100%;
       margin-bottom: 10px;
     }
-    .result-container, .dialog-container {
-      display: none; /* Скрыть по умолчанию */
-    }
     .result-container p, .dialog-container p {
       font-weight: 500;
       margin: 0;
@@ -140,19 +137,19 @@
       <textarea id="text-input" name="text" placeholder="Вставьте текст с формулами или диалог"></textarea>
       <button type="submit">Форматировать</button>
     </form>
-    <div class="result-container" id="result-container">
+    <div class="result-container">
       <div class="result-header">
         <p>Здесь будет результат:</p>
         <button id="copy-button">Скопировать результат</button>
       </div>
-      <pre class="result" id="result">Прямо тут</pre>
+      <pre class="result">Прямо тут</pre>
     </div>
-    <div class="dialog-container" id="dialog-container">
+    <div class="dialog-container" style="display: none;">
       <div class="result-header">
         <p>Форматированный диалог:</p>
         <button id="copy-dialog-button">Скопировать диалог</button>
       </div>
-      <pre class="dialog" id="dialog">Здесь будет форматированный диалог</pre>
+      <pre class="dialog">Здесь будет форматированный диалог</pre>
     </div>
   </main>
   <footer>
@@ -161,10 +158,9 @@
   <div class="notification" id="notification">Результат скопирован в буфер обмена</div>
   <script>
     const form = document.querySelector('form');
-    const resultContainer = document.getElementById('result-container');
-    const result = document.getElementById('result');
-    const dialogContainer = document.getElementById('dialog-container');
-    const dialogOutput = document.getElementById('dialog');
+    const result = document.querySelector('.result');
+    const dialogContainer = document.querySelector('.dialog-container');
+    const dialogOutput = document.querySelector('.dialog');
     const copyButton = document.getElementById('copy-button');
     const copyDialogButton = document.getElementById('copy-dialog-button');
     const notification = document.getElementById('notification');
@@ -175,12 +171,7 @@
       const formattedText = formatText(removeDialogLines(text));
       const formattedDialog = formatDialog(text);
       
-      if (formattedText) {
-        result.textContent = formattedText;
-        resultContainer.style.display = 'block'; // Показать результат
-      } else {
-        resultContainer.style.display = 'none'; // Скрыть результат, если пусто
-      }
+      result.textContent = formattedText;
 
       if (formattedDialog) {
         dialogOutput.textContent = formattedDialog;
@@ -243,4 +234,12 @@
     }
 
     function showNotification(message) {
-      notification.text
+      notification.textContent = message;
+      notification.style.display = 'block';
+      setTimeout(() => {
+        notification.style.display = 'none';
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
