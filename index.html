@@ -37,7 +37,7 @@
       padding: 20px;
       width: 100%;
     }
-    form, .result-container, .output-container, .dialog-container {
+    form, .result-container {
       background: white;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       border-radius: 10px;
@@ -80,11 +80,11 @@
       width: 100%;
       margin-bottom: 10px;
     }
-    .result-container p, .output-container p, .dialog-container p {
+    .result-container p {
       font-weight: 500;
       margin: 0;
     }
-    .result pre, .output pre, .dialog pre {
+    .result pre {
       background: #f4f4f4;
       padding: 15px;
       border-radius: 5px;
@@ -99,7 +99,6 @@
       overflow: auto;
       box-sizing: border-box;
       margin: 0;
-      max-height: 200px;
     }
     .notification {
       position: fixed;
@@ -132,7 +131,7 @@
   <main>
     <form>
       <label for="text-input">Введите ваш текст</label>
-      <textarea id="text-input" name="text" placeholder="Вставьте текст с формулами или диалог"></textarea>
+      <textarea id="text-input" name="text" placeholder="Вставьте текст с формулами"></textarea>
       <button type="submit">Форматировать</button>
     </form>
     <div class="result-container">
@@ -142,14 +141,6 @@
       </div>
       <pre class="result">Прямо тут</pre>
     </div>
-    <div class="output-container">
-      <p>Результат форматирования:</p>
-      <pre class="output">Здесь будет отформатированный текст</pre>
-    </div>
-    <div class="dialog-container">
-      <p>Форматированный диалог:</p>
-      <pre class="dialog">Здесь будет форматированный диалог</pre>
-    </div>
   </main>
   <footer>
     <p>Автор – <a href="https://t.me/novikovdenis" target="_blank">@novikovdenis</a> 💚 для Практикума с любовью</p>
@@ -158,8 +149,6 @@
   <script>
     const form = document.querySelector('form');
     const result = document.querySelector('.result');
-    const output = document.querySelector('.output');
-    const dialogOutput = document.querySelector('.dialog');
     const copyButton = document.getElementById('copy-button');
     const notification = document.getElementById('notification');
     
@@ -167,12 +156,10 @@
       e.preventDefault();
       const text = form.text.value;
       result.textContent = formatText(text);
-      output.textContent = formatText(text);
-      dialogOutput.textContent = formatDialog(text);
     });
 
     copyButton.addEventListener('click', () => {
-      const text = output.textContent;
+      const text = result.textContent;
       navigator.clipboard.writeText(text).then(() => {
         showNotification();
       }, (err) => {
@@ -190,23 +177,6 @@
       text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n        ${p1}\n{/quiz-task}`);
       
       return text;
-    }
-
-    function formatDialog(text) {
-      const dialogRegex = /(\w+):\s(.+?)(?=\n\w+:|$)/gs;
-      const content = [];
-      let match;
-      while ((match = dialogRegex.exec(text)) !== null) {
-        const [_, character, message] = match;
-        const formattedCharacter = character === 'Макс' ? 'Max-new' : character;
-        content.push({
-          side: 'left',
-          type: 'text',
-          message: message.trim(),
-          character: formattedCharacter
-        });
-      }
-      return JSON.stringify({ content, type: 'Dialog' }, null, 2);
     }
 
     function showNotification() {
