@@ -1,1 +1,0 @@
-# novikov-denis.github.io
