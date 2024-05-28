@@ -156,6 +156,16 @@
     <p>Автор – <a href="https://t.me/novikovdenis" target="_blank">@novikovdenis</a> 🧡 для Практикума с любовью</p>
   </footer>
   <div class="notification" id="notification">Результат скопирован в буфер обмена</div>
+  <div class="welcome-notification" id="welcome-notification">
+    <p>Привет 👋🏼</p>
+    <p>⚡️ Сейчас актуальная версия формартера – 1.0.1</p>
+    <p>Что нового?</p>
+    <ol>
+      <li>Умею определять диалоги для курсов математики (Персонажи: Ульяна и Макс)</li>
+      <li>Научился определять iframe и теперь могу заменить его в тексте</li>
+    </ol>
+    <p>Дальше больше 🙂</p>
+  </div>
   <script>
     const form = document.querySelector('form');
     const result = document.querySelector('.result');
@@ -164,7 +174,12 @@
     const copyButton = document.getElementById('copy-button');
     const copyDialogButton = document.getElementById('copy-dialog-button');
     const notification = document.getElementById('notification');
+    const welcomeNotification = document.getElementById('welcome-notification');
     
+    document.addEventListener('DOMContentLoaded', () => {
+      showWelcomeNotification();
+    });
+
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const text = form.text.value;
@@ -243,6 +258,13 @@
       setTimeout(() => {
         notification.style.display = 'none';
       }, 3000);
+    }
+
+    function showWelcomeNotification() {
+      welcomeNotification.style.display = 'block';
+      setTimeout(() => {
+        welcomeNotification.style.display = 'none';
+      }, 10000);
     }
   </script>
 </body>
