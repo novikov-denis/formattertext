@@ -114,6 +114,18 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       display: none;
     }
+    .welcome-notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: none;
+      z-index: 1000;
+    }
     footer {
       background-color: #FC6736;
       color: white;
@@ -264,7 +276,7 @@
       welcomeNotification.style.display = 'block';
       setTimeout(() => {
         welcomeNotification.style.display = 'none';
-      }, 10000);
+      }, 60000); // 1 minute
     }
   </script>
 </body>
