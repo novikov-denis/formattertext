@@ -102,6 +102,7 @@
       max-width: 100%;
       overflow: auto;
       box-sizing: border-box;
+      margin: 0;
     }
     .notification {
       position: fixed;
@@ -177,7 +178,7 @@
 
       // Форматирование блоков <aside>
       const asideRegex = /<aside>\s*💡\s*(.*?)\s*<\/aside>/gs;
-      text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n        ${p1}\n{/quiz-task}`);
+      text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n   content: |\n     ${p1}\n{/quiz-task}`);
       
       return text;
     }
