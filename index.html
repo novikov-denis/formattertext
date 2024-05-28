@@ -101,6 +101,17 @@
       overflow: auto;
       max-width: 100%;
     }
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #4caf50;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: none;
+    }
     footer {
       background-color: #4caf50;
       color: white;
@@ -129,12 +140,14 @@
     </div>
   </main>
   <footer>
-    <p>с любовью для Практикума 💙</p>
+    <p>с любовью для Практикума 💚</p>
   </footer>
+  <div class="notification" id="notification">Результат скопирован в буфер обмена</div>
   <script>
     const form = document.querySelector('form');
     const result = document.querySelector('.result');
     const copyButton = document.getElementById('copy-button');
+    const notification = document.getElementById('notification');
     
     form.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -145,7 +158,7 @@
     copyButton.addEventListener('click', () => {
       const text = result.textContent;
       navigator.clipboard.writeText(text).then(() => {
-        alert('Результат скопирован в буфер обмена');
+        showNotification();
       }, (err) => {
         console.error('Ошибка при копировании: ', err);
       });
@@ -161,6 +174,13 @@
       text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n    content: |\n    ${p1}\n{/quiz-task}`);
       
       return text;
+    }
+
+    function showNotification() {
+      notification.style.display = 'block';
+      setTimeout(() => {
+        notification.style.display = 'none';
+      }, 3000);
     }
   </script>
 </body>
