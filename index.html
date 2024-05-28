@@ -98,8 +98,9 @@
       font-family: 'Roboto', sans-serif;
       color: #333;
       width: 100%;
-      overflow: auto;
       max-width: 100%;
+      overflow: auto;
+      box-sizing: border-box;
     }
     .notification {
       position: fixed;
@@ -118,6 +119,10 @@
       text-align: center;
       padding: 10px;
       margin-top: auto;
+    }
+    footer a {
+      color: white;
+      text-decoration: none;
     }
   </style>
 </head>
@@ -140,7 +145,7 @@
     </div>
   </main>
   <footer>
-    <p>с любовью для Практикума 💚</p>
+    <p>Автор – <a href="https://t.me/novikovdenis" target="_blank">@novikovdenis</a> 💚 для Практикума с любовью</p>
   </footer>
   <div class="notification" id="notification">Результат скопирован в буфер обмена</div>
   <script>
