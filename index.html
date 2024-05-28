@@ -215,11 +215,12 @@
       let match;
       while ((match = dialogRegex.exec(text)) !== null) {
         const [_, character, message] = match;
+        const formattedMessage = formatText(message.trim());
         const formattedCharacter = character === 'Макс' ? 'Max-new' : character;
         content.push({
           side: 'left',
           type: 'text',
-          message: message.trim(),
+          message: formattedMessage,
           character: formattedCharacter
         });
       }
