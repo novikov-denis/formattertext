@@ -169,7 +169,12 @@
       const formattedText = formatText(text);
       const formattedDialog = formatDialog(text);
       
-      result.textContent = formattedText;
+      // Отображаем только отформатированный текст, если это не диалог
+      if (!formattedDialog) {
+        result.textContent = formattedText;
+      } else {
+        result.textContent = '';
+      }
 
       if (formattedDialog) {
         dialogOutput.textContent = formattedDialog;
