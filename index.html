@@ -338,8 +338,8 @@
       const rightText = macaroniForm['right'].value;
       const answerText = macaroniForm['answer'].value;
 
-      const leftChoices = leftText.split('\n').map(line => line.trim()).filter(line => line);
-      const rightChoices = rightText.split('\n').map(line => line.trim()).filter(line => line);
+      const leftChoices = leftText.split('\n').map(line => line.trim().replace(/^\d+\.\s*/, '').replace(/^[а-я]\)\s*/, '')).filter(line => line);
+      const rightChoices = rightText.split('\n').map(line => line.trim().replace(/^\d+\.\s*/, '').replace(/^[а-я]\)\s*/, '')).filter(line => line);
       const correctAnswers = answerText.match(/\(\d+,\d+\)/g).map(pair => pair.replace(/[()]/g, '').split(',').map(Number));
 
       // Перемешивание правых вариантов и обновление правильных ответов
