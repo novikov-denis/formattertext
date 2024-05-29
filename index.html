@@ -38,7 +38,7 @@
       padding: 20px;
       width: 100%;
     }
-    form, .result-container, .dialog-container {
+    form, .result-container, .dialog-container, .macaroni-container {
       background: white;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       border-radius: 10px;
@@ -47,7 +47,7 @@
       width: 100%;
       max-width: 800px;
     }
-    form label {
+    form label, .macaroni-container label {
       font-weight: 500;
       margin-bottom: 10px;
     }
@@ -82,11 +82,11 @@
       width: 100%;
       margin-bottom: 10px;
     }
-    .result-container p, .dialog-container p {
+    .result-container p, .dialog-container p, .macaroni-container p {
       font-weight: 500;
       margin: 0;
     }
-    .result pre, .dialog pre {
+    .result pre, .dialog pre, .macaroni pre {
       background: #f5f5f5; /* Цвет фона как у поля для кода */
       border: 1px solid #ccc; /* Обрамление как у поля для кода */
       padding: 15px;
@@ -186,6 +186,7 @@
     <div id="tests-container" class="hidden">
       <div class="button-container">
         <button id="problem-marker-button">Маркер Проблемы</button>
+        <button id="macaroni-button">Макароны</button>
       </div>
       <div id="problem-marker-container" class="hidden">
         <div class="button-container">
@@ -205,6 +206,24 @@
           <pre class="result" id="test-result">Прямо тут</pre>
         </div>
       </div>
+      <div id="macaroni-container" class="hidden">
+        <form id="macaroni-form">
+          <label for="left-input">Левая часть</label>
+          <textarea id="left-input" name="left" placeholder="Введите текст левой части"></textarea>
+          <label for="right-input">Правая часть</label>
+          <textarea id="right-input" name="right" placeholder="Введите текст правой части"></textarea>
+          <label for="answer-input">Правильный ответ</label>
+          <textarea id="answer-input" name="answer" placeholder="Введите правильные ответы в формате (0,3),(1,4)"></textarea>
+          <button type="submit">Форматировать</button>
+        </form>
+        <div id="macaroni-result-container" class="result-container hidden">
+          <div class="result-header">
+            <p>Здесь будет результат:</p>
+            <button id="macaroni-copy-button">Скопировать результат</button>
+          </div>
+          <pre class="result" id="macaroni-result">Прямо тут</pre>
+        </div>
+      </div>
     </div>
   </main>
   <footer>
@@ -218,6 +237,7 @@
     <p>- Умею определять диалоги для курсов математики (Персонажи: Ульяна и Макс)</p>
     <p>- Научился определять iframe и теперь могу заменить его в тексте</p>
     <p>- Форматирую блок Маркер Проблемы с одиночным или множественным вариантом ответов</p>
+    <p>- Ура! Макароны побеждены! Могу определять варианты, и перемешивать их</p>
     <br>
     <p>Дальше больше 🙂</p>
   </div>
@@ -236,6 +256,7 @@
     const mathContainer = document.getElementById('mathematics-container');
     const testsContainer = document.getElementById('tests-container');
     const problemMarkerButton = document.getElementById('problem-marker-button');
+    const macaroniButton = document.getElementById('macaroni-button');
     const problemMarkerContainer = document.getElementById('problem-marker-container');
     const singleChoiceButton = document.getElementById('single-choice-button');
     const multipleChoiceButton = document.getElementById('multiple-choice-button');
@@ -243,6 +264,12 @@
     const testResult = document.getElementById('test-result');
     const testCopyButton = document.getElementById('test-copy-button');
     const resultContainer = document.getElementById('result-container');
+
+    const macaroniContainer = document.getElementById('macaroni-container');
+    const macaroniForm = document.getElementById('macaroni-form');
+    const macaroniResult = document.getElementById('macaroni-result');
+    const macaroniCopyButton = document.getElementById('macaroni-copy-button');
+    const macaroniResultContainer = document.getElementById('macaroni-result-container');
 
     let currentFormat = 'single'; // Default format
 
@@ -258,6 +285,12 @@
 
     problemMarkerButton.addEventListener('click', () => {
       problemMarkerContainer.classList.remove('hidden');
+      macaroniContainer.classList.add('hidden');
+    });
+
+    macaroniButton.addEventListener('click', () => {
+      macaroniContainer.classList.remove('hidden');
+      problemMarkerContainer.classList.add('hidden');
     });
 
     singleChoiceButton.addEventListener('click', () => {
@@ -299,6 +332,42 @@
       testResult.textContent = formattedText;
     });
 
+    macaroniForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const leftText = macaroniForm['left'].value;
+      const rightText = macaroniForm['right'].value;
+      const answerText = macaroniForm['answer'].value;
+
+      const leftChoices = leftText.split('\n').map(line => line.trim()).filter(line => line);
+      const rightChoices = rightText.split('\n').map(line => line.trim()).filter(line => line);
+      const correctAnswers = answerText.match(/\(\d+,\d+\)/g).map(pair => pair.replace(/[()]/g, '').split(',').map(Number));
+
+      // Перемешивание правых вариантов и обновление правильных ответов
+      const shuffledRightChoices = shuffleArrayWithIndices(rightChoices);
+      const newCorrectAnswers = correctAnswers.map(([leftIndex, rightIndex]) => [leftIndex, shuffledRightChoices.indices[rightIndex]]);
+
+      const macaroniResultObject = {
+        content: {
+          options: {
+            left: {
+              choices: leftChoices
+            },
+            right: {
+              choices: shuffledRightChoices.array
+            }
+          },
+          button_text: "Узнать ответ",
+          correct_answers: [newCorrectAnswers],
+          meta: {},
+          isPasted: true
+        },
+        type: "QuizMacaroni"
+      };
+
+      macaroniResult.textContent = JSON.stringify(macaroniResultObject, null, 2);
+      macaroniResultContainer.classList.remove('hidden');
+    });
+
     copyButton.addEventListener('click', () => {
       const text = result.textContent;
       navigator.clipboard.writeText(text).then(() => {
@@ -319,6 +388,15 @@
 
     testCopyButton.addEventListener('click', () => {
       const text = testResult.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        showNotification('Результат скопирован в буфер обмена');
+      }, (err) => {
+        console.error('Ошибка при копировании: ', err);
+      });
+    });
+
+    macaroniCopyButton.addEventListener('click', () => {
+      const text = macaroniResult.textContent;
       navigator.clipboard.writeText(text).then(() => {
         showNotification('Результат скопирован в буфер обмена');
       }, (err) => {
@@ -410,6 +488,16 @@
         type: "ProblemMarker"
       };
       return JSON.stringify(problemMarker, null, 2);
+    }
+
+    function shuffleArrayWithIndices(array) {
+      const indices = array.map((_, index) => index);
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+      return { array, indices };
     }
 
     function showNotification(message) {
