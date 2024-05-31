@@ -401,7 +401,7 @@
       });
 
       function cleanChoices(text) {
-        return text.split('\n').map(line => line.trim().replace(/^[\d]+\.\s*/, '').replace(/^[A-Z]\)\s*/, '').replace(/^[-–]\s*/, '')).filter(line => line);
+        return text.split('\n').map(line => line.trim().replace(/^[A-Z]\)\s*/, '').replace(/^[-–]\s*/, '')).filter(line => line);
       }
 
       function formatText(text) {
@@ -444,7 +444,7 @@
 
       function formatSingleChoiceText(text) {
         const lines = text.split('\n').map(line => line.trim()).filter(line => line);
-        const choices = lines.map(line => line.replace(/^[-–]\s*/, '').replace(/^[а-г]\)\s*/, '').replace(/^\d+\.\s*/, '').replace(/^[а-я]\)\s*/, ''));
+        const choices = lines.map(line => line.replace(/^[A-Z]\)\s*/, '').replace(/^[-–]\s*/, ''));
         const problemMarker = {
           content: {
             id: "44c296e3-eb80-4ae9-beb3-d8b997c37d51",
@@ -468,10 +468,10 @@
 
       function formatMultipleChoiceText(text) {
         const lines = text.split('\n').map(line => line.trim()).filter(line => line);
-        const choices = lines.map(line => line.replace(/^[-–]\s*/, '').replace(/^[а-г]\)\с*/, '').replace(/^\д+\.\с*/, '').replace(/^[а-я]\)\с*/, ''));
+        const choices = lines.map(line => line.replace(/^[A-Z]\)\s*/, '').replace(/^[-–]\s*/, ''));
         const problemMarker = {
           content: {
-            id: "44c296e3-eb80-4ae9-беб3-д8б997с37д51",
+            id: "44c296e3-eb80-4ae9-beb3-d8b997c37d51",
             misc: {
               feedback: [null, null, null, null]
             },
