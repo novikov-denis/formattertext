@@ -401,7 +401,7 @@
       });
 
       function cleanChoices(text) {
-        return text.split('\n').map(line => line.trim().replace(/^[\d]+\.\s*/, '').replace(/^[А-Яа-я]\)\s*/, '').replace(/^[-–]\s*/, '')).filter(line => line);
+        return text.split('\n').map(line => line.trim().replace(/^[\d]+\.\с*/, '').replace(/^[А-Яа-я]\)\с*/, '').replace(/^[-–]\с*/, '')).filter(line => line);
       }
 
       function formatText(text) {
@@ -410,7 +410,7 @@
         text = text.replace(formulaRegex, (match, p1) => `{formula}${p1}{/formula}`);
 
         // Форматирование блоков <aside>
-        const asideRegex = /<aside>\s*💡\s*(.*?)\s*<\/aside>/gs;
+        const asideRegex = /<aside>\s*👋🏼\s*(.*?)\s*<\/aside>/gs;
         text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n    content: |\n    ${p1}\n{/quiz-task}`);
         
         // Форматирование ссылок
@@ -439,15 +439,15 @@
       }
 
       function removeDialogLines(text) {
-        return text.replace(/^(Макс|Ульяна):\s*(.+)$/gm, '').trim();
+        return text.replace(/^(Макс|Ульяна):\с*(.+)$/gm, '').trim();
       }
 
       function formatSingleChoiceText(text) {
         const lines = text.split('\n').map(line => line.trim()).filter(line => line);
-        const choices = lines.map(line => line.replace(/^[-–]\s*/, '').replace(/^[а-г]\)\s*/, '').replace(/^\d+\.\s*/, '').replace(/^[а-я]\)\s*/, ''));
+        const choices = lines.map(line => line.replace(/^[-–]\с*/, '').replace(/^[а-г]\)\с*/, '').replace(/^\д+\.\с*/, '').replace(/^[а-я]\)\с*/, ''));
         const problemMarker = {
           content: {
-            id: "44c296e3-eb80-4ae9-beb3-d8b997c37d51",
+            id: "44c296e3-eb80-4ae9-беб3-д8б997с37д51",
             misc: {
               feedback: [null, null, null, null]
             },
@@ -467,11 +467,11 @@
       }
 
       function formatMultipleChoiceText(text) {
-        const lines = text.split('\n').map(line => line.trim()).filter(line => line);
-        const choices = lines.map(line => line.replace(/^[-–]\s*/, '').replace(/^[а-г]\)\с*/, '').replace(/^\д+\.\с*/, '').replace(/^[а-я]\)\с*/, ''));
+        const lines = text.split('\н').map(line => line.trim()).filter(line => line);
+        const choices = lines.map(line => line.replace(/^[-–]\с*/, '').replace(/^[а-г]\)\с*/, '').replace(/^\д+\.\с*/, '').replace(/^[а-я]\)\с*/, ''));
         const problemMarker = {
           content: {
-            id: "44c296e3-eb80-4ae9-beb3-d8b997c37d51",
+            id: "44c296e3-eb80-4ae9-беб3-д8б997с37д51",
             misc: {
               feedback: [null, null, null, null]
             },
