@@ -82,10 +82,6 @@
       width: 100%;
       margin-bottom: 10px;
     }
-    .result-container p, .dialog-container p, .macaroni-container p {
-      font-weight: 500;
-      margin: 0;
-    }
     .result pre, .dialog pre, .macaroni pre {
       background: #f5f5f5; /* Цвет фона как у поля для кода */
       border: 1px solid #ccc; /* Обрамление как у поля для кода */
@@ -227,7 +223,7 @@
     </div>
   </main>
   <footer>
-    <p>Автор – <a href="https://t.me/novikovdenis" target="_blank">@novikovденis</a> 🧡 для Практикума с любовью</p>
+    <p>Автор – <a href="https://t.me/novikovdenis" target="_blank">@novikovdenis</a> 🧡 для Практикума с любовью</p>
   </footer>
   <div class="notification" id="notification">Результат скопирован в буфер обмена</div>
   <div class="welcome-notification" id="welcome-notification">
@@ -406,7 +402,7 @@
       });
 
       function cleanChoices(text) {
-        return text.split('\n').map(line => line.trim().replace(/^[\d]+\.\s*/, '').replace(/^[А-Яа-я]\)\s*/, '')).filter(line => line);
+        return text.split('\n').map(line => line.trim().replace(/^[\d]+\.\s*/, '').replace(/^[А-Яа-я]\)\s*/, '').replace(/^[-–]\s*/, '')).filter(line => line);
       }
 
       function formatText(text) {
@@ -449,7 +445,7 @@
 
       function formatSingleChoiceText(text) {
         const lines = text.split('\n').map(line => line.trim()).filter(line => line);
-        const choices = lines.map(line => line.replace(/^[а-г]\)\s*/, '').replace(/^\d+\.\s*/, '').replace(/^[а-я]\)\s*/, ''));
+        const choices = lines.map(line => line.replace(/^[-–]\s*/, '').replace(/^[а-г]\)\s*/, '').replace(/^\d+\.\s*/, '').replace(/^[а-я]\)\s*/, ''));
         const problemMarker = {
           content: {
             id: "44c296e3-eb80-4ae9-beb3-d8b997c37d51",
@@ -473,7 +469,7 @@
 
       function formatMultipleChoiceText(text) {
         const lines = text.split('\n').map(line => line.trim()).filter(line => line);
-        const choices = lines.map(line => line.replace(/^[а-г]\)\s*/, '').replace(/^\d+\.\s*/, '').replace(/^[а-я]\)\s*/, ''));
+        const choices = lines.map(line => line.replace(/^[-–]\s*/, '').replace(/^[а-г]\)\s*/, '').replace(/^\d+\.\s*/, '').replace(/^[а-я]\)\s*/, ''));
         const problemMarker = {
           content: {
             id: "44c296e3-eb80-4ae9-beb3-d8b997c37d51",
