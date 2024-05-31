@@ -340,8 +340,7 @@
         const correctAnswers = answerText.match(/\(\d+,\d+\)/g).map(pair => pair.replace(/[()]/g, '').split(',').map(Number));
 
         // Перемешивание правых вариантов и обновление правильных ответов
-        const shuffledRightChoices = shuffleArrayWithIndices(rightChoices);
-        const newCorrectAnswers = correctAnswers.map(([leftIndex, rightIndex]) => [leftIndex, shuffledRightChoices.indices[rightIndex]]);
+        const { shuffledArray: shuffledRightChoices, newCorrectAnswers } = shuffleArrayAndUpdateAnswers(rightChoices, correctAnswers);
 
         const macaroniResultObject = {
           content: {
@@ -350,7 +349,7 @@
                 choices: leftChoices
               },
               right: {
-                choices: shuffledRightChoices.array
+                choices: shuffledRightChoices
               }
             },
             button_text: "Узнать ответ",
@@ -469,7 +468,7 @@
 
       function formatMultipleChoiceText(text) {
         const lines = text.split('\n').map(line => line.trim()).filter(line => line);
-        const choices = lines.map(line => line.replace(/^[-–]\s*/, '').replace(/^[а-г]\)\s*/, '').replace(/^\d+\.\s*/, '').replace(/^[а-я]\)\s*/, ''));
+        const choices = lines.map(line => line.replace(/^[-–]\s*/, '').replace(/^[а-г]\)\с*/, '').replace(/^\д+\.\с*/, '').replace(/^[а-я]\)\с*/, ''));
         const problemMarker = {
           content: {
             id: "44c296e3-eb80-4ae9-beb3-d8b997c37d51",
@@ -491,14 +490,16 @@
         return JSON.stringify(problemMarker, null, 2);
       }
 
-      function shuffleArrayWithIndices(array) {
-        const indices = array.map((_, index) => index);
-        for (let i = array.length - 1; i > 0; i--) {
+      function shuffleArrayAndUpdateAnswers(array, correctAnswers) {
+        const shuffledArray = [...array];
+        const newIndices = shuffledArray.map((_, index) => index);
+        for (let i = shuffledArray.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
-          [array[i], array[j]] = [array[j], array[i]];
-          [indices[i], indices[j]] = [indices[j], indices[i]];
+          [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+          [newIndices[i], newIndices[j]] = [newIndices[j], newIndices[i]];
         }
-        return { array, indices };
+        const newCorrectAnswers = correctAnswers.map(([leftIndex, rightIndex]) => [leftIndex, newIndices[rightIndex]]);
+        return { shuffledArray, newCorrectAnswers };
       }
 
       function showNotification(message) {
