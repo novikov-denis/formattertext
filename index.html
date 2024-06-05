@@ -38,7 +38,7 @@
       padding: 20px;
       width: 100%;
     }
-    form, .result-container, .dialog-container, .macaroni-container {
+    form, .result-container, .dialog-container, .macaroni-container, .autotest-container {
       background: white;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       border-radius: 10px;
@@ -47,18 +47,17 @@
       width: 100%;
       max-width: 800px;
     }
-    form label, .macaroni-container label {
+    form label {
       font-weight: 500;
       margin-bottom: 10px;
     }
-    textarea {
+    textarea, input[type="text"], input[type="url"] {
       width: 100%;
       padding: 15px;
       font-size: 1rem;
       border: 1px solid #ccc;
       border-radius: 5px;
       margin-bottom: 20px;
-      height: 150px;
       resize: vertical;
     }
     button {
@@ -82,23 +81,23 @@
       width: 100%;
       margin-bottom: 10px;
     }
-    .result pre, .dialog pre, .macaroni pre {
-      background: #f5f5f5; /* Цвет фона как у поля для кода */
-      border: 1px solid #ccc; /* Обрамление как у поля для кода */
+    .result pre {
+      background: #f5f5f5;
+      border: 1px solid #ccc;
       padding: 15px;
       border-radius: 5px;
       white-space: pre-wrap;
       word-wrap: break-word;
       overflow-wrap: break-word;
       font-size: 1rem;
-      font-family: 'Roboto Mono', monospace; /* Шрифт как у кода */
+      font-family: 'Roboto Mono', monospace;
       color: #333;
       width: 100%;
       max-width: 100%;
       overflow: auto;
       box-sizing: border-box;
       margin: 0;
-      max-height: 300px; /* Увеличено для больших текстов */
+      max-height: 300px;
     }
     .notification {
       position: fixed;
@@ -157,6 +156,7 @@
     <div class="button-container">
       <button id="mathematics-button">Основной текст</button>
       <button id="tests-button">Тесты</button>
+      <button id="autotests-button">Автотесты</button>
     </div>
     <div id="mathematics-container" class="hidden">
       <form id="math-form">
@@ -221,6 +221,28 @@
         </div>
       </div>
     </div>
+    <div id="autotests-container" class="hidden">
+      <form id="autotests-form">
+        <label for="tag-input">Тег команды тестописателей</label>
+        <input type="text" id="tag-input" name="tag" placeholder="@тег_команды + @Тег_кого_то_из_команды_профы">
+        <label for="path-input">Полный путь к уроку в админке</label>
+        <input type="text" id="path-input" name="path" placeholder="Название профы/номер и название трека/Название курса/Название темы/Название урока/Номер упражнения (или задачи)">
+        <label for="admin-link-input">Ссылка на админку</label>
+        <input type="url" id="admin-link-input" name="admin-link" placeholder="Введите ссылку">
+        <label for="lesson-link-input">Ссылка на урок в Notion или Wiki</label>
+        <input type="url" id="lesson-link-input" name="lesson-link" placeholder="Введите ссылку">
+        <label for="autotest-code-input">Код автотеста</label>
+        <textarea id="autotest-code-input" name="autotest-code" placeholder="Введите код автотеста"></textarea>
+        <button type="submit">Форматировать</button>
+      </form>
+      <div class="result-container">
+        <div class="result-header">
+          <p>Здесь будет результат:</p>
+          <button id="autotest-copy-button">Скопировать результат</button>
+        </div>
+        <pre class="result" id="autotest-result">Прямо тут</pre>
+      </div>
+    </div>
   </main>
   <footer>
     <p>Автор – <a href="https://t.me/novikovdenis" target="_blank">@novikovdenis</a> 🧡 для Практикума с любовью</p>
@@ -230,10 +252,7 @@
     <p>Привет 👋🏼</p>
     <br>
     <p>Что нового?</p>
-    <p>- Умею определять диалоги для курсов математики (Персонажи: Ульяна и Макс)</p>
-    <p>- Научился определять iframe и теперь могу заменить его в тексте</p>
-    <p>- Форматирую блок Маркер Проблемы с одиночным или множественным вариантом ответов</p>
-    <p>- Ура! Макароны побеждены! Могу определять варианты, и перемешивать их</p>
+    <p>- Теперь я помогаю формировать код для автотестов</p>
     <br>
     <p>Дальше больше 🙂</p>
   </div>
@@ -250,8 +269,11 @@
 
       const mathButton = document.getElementById('mathematics-button');
       const testsButton = document.getElementById('tests-button');
+      const autotestsButton = document.getElementById('autotests-button');
       const mathContainer = document.getElementById('mathematics-container');
       const testsContainer = document.getElementById('tests-container');
+      const autotestsContainer = document.getElementById('autotests-container');
+
       const problemMarkerButton = document.getElementById('problem-marker-button');
       const macaroniButton = document.getElementById('macaroni-button');
       const problemMarkerContainer = document.getElementById('problem-marker-container');
@@ -268,16 +290,28 @@
       const macaroniCopyButton = document.getElementById('macaroni-copy-button');
       const macaroniResultContainer = document.getElementById('macaroni-result-container');
 
+      const autotestsForm = document.getElementById('autotests-form');
+      const autotestResult = document.getElementById('autotest-result');
+      const autotestCopyButton = document.getElementById('autotest-copy-button');
+
       let currentFormat = 'single'; // Default format
 
       mathButton.addEventListener('click', () => {
         mathContainer.classList.remove('hidden');
         testsContainer.classList.add('hidden');
+        autotestsContainer.classList.add('hidden');
       });
 
       testsButton.addEventListener('click', () => {
         testsContainer.classList.remove('hidden');
         mathContainer.classList.add('hidden');
+        autotestsContainer.classList.add('hidden');
+      });
+
+      autotestsButton.addEventListener('click', () => {
+        autotestsContainer.classList.remove('hidden');
+        mathContainer.classList.add('hidden');
+        testsContainer.classList.add('hidden');
       });
 
       problemMarkerButton.addEventListener('click', () => {
@@ -364,6 +398,26 @@
         macaroniResultContainer.classList.remove('hidden');
       });
 
+      autotestsForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const tag = autotestsForm['tag'].value;
+        const path = autotestsForm['path'].value;
+        const adminLink = autotestsForm['admin-link'].value;
+        const lessonLink = autotestsForm['lesson-link'].value;
+        const autotestCode = autotestsForm['autotest-code'].value;
+
+        const formattedResult = `
+# ${tag}
+# ${path}
+# ${adminLink}
+# ${lessonLink}
+
+${autotestCode}
+        `.trim();
+
+        autotestResult.textContent = formattedResult;
+      });
+
       copyButton.addEventListener('click', () => {
         const text = result.textContent;
         navigator.clipboard.writeText(text).then(() => {
@@ -400,20 +454,26 @@
         });
       });
 
+      autotestCopyButton.addEventListener('click', () => {
+        const text = autotestResult.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          showNotification('Результат скопирован в буфер обмена');
+        }, (err) => {
+          console.error('Ошибка при копировании: ', err);
+        });
+      });
+
       function cleanChoices(text) {
         return text.split('\n').map(line => line.trim().replace(/^[A-Z]\)\s*/, '').replace(/^[-–]\s*/, '')).filter(line => line);
       }
 
       function formatText(text) {
-        // Форматирование формул
         const formulaRegex = /\$(.*?)\$/gs;
         text = text.replace(formulaRegex, (match, p1) => `{formula}${p1}{/formula}`);
 
-        // Форматирование блоков <aside> в <quiz-task>
         const asideRegex = /<aside>\s*(.*?)\s*<\/aside>/gs;
         text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n    content: |\n    ${p1}\n{/quiz-task}`);
         
-        // Форматирование ссылок
         const linkRegex = /https:\/\/code\.s3\.yandex\.net\/.*?\.html/g;
         text = text.replace(linkRegex, (match) => `{iframe:${match}|minHeight:580px|minWidth:764px}`);
         
