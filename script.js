@@ -160,47 +160,27 @@ ${autotestCode}
 
   copyButton.addEventListener('click', () => {
     const text = result.textContent;
-    navigator.clipboard.writeText(text).then(() => {
-      showNotification('Результат скопирован в буфер обмена');
-    }, (err) => {
-      console.error('Ошибка при копировании: ', err);
-    });
+    copyToClipboard(text);
   });
 
   copyDialogButton.addEventListener('click', () => {
     const text = dialogOutput.textContent;
-    navigator.clipboard.writeText(text).then(() => {
-      showNotification('Диалог скопирован в буфер обмена');
-    }, (err) => {
-      console.error('Ошибка при копировании: ', err);
-    });
+    copyToClipboard(text);
   });
 
   testCopyButton.addEventListener('click', () => {
     const text = testResult.textContent;
-    navigator.clipboard.writeText(text).then(() => {
-      showNotification('Результат скопирован в буфер обмена');
-    }, (err) => {
-      console.error('Ошибка при копировании: ', err);
-    });
+    copyToClipboard(text);
   });
 
   macaroniCopyButton.addEventListener('click', () => {
     const text = macaroniResult.textContent;
-    navigator.clipboard.writeText(text).then(() => {
-      showNotification('Результат скопирован в буфер обмена');
-    }, (err) => {
-      console.error('Ошибка при копировании: ', err);
-    });
+    copyToClipboard(text);
   });
 
   autotestCopyButton.addEventListener('click', () => {
     const text = autotestResult.textContent;
-    navigator.clipboard.writeText(text).then(() => {
-      showNotification('Результат скопирован в буфер обмена');
-    }, (err) => {
-      console.error('Ошибка при копировании: ', err);
-    });
+    copyToClipboard(text);
   });
 
   function cleanChoices(text) {
@@ -315,5 +295,13 @@ ${autotestCode}
     setTimeout(() => {
       welcomeNotification.style.display = 'none';
     }, 8000);
+  }
+
+  function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+      showNotification('Результат скопирован в буфер обмена');
+    }, (err) => {
+      console.error('Ошибка при копировании: ', err);
+    });
   }
 });
