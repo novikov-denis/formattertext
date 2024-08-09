@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
   problemForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const text = problemForm['test-text'].value;
-    const formattedText = currentFormat === 'single' ? formatSingleChoiceText(text) : formatMultipleChoiceText(text);
+    const formattedText = formatSingleChoiceText(text);
     testResult.textContent = formattedText;
   });
 
@@ -242,15 +242,8 @@ ${autotestCode}
     return text.replace(/^(Макс|Ульяна):\s*(.+)$/gm, '').trim();
   }
 
-  function formatSingleChoiceText() {
-    const choices = [
-      "Заголовок (Header).",
-      "Полезная нагрузка (Payload).",
-      "Ключ шифрования (Encryption Key).",
-      "Подпись (Signature).",
-      "Идентификатор пользователя (User ID).",
-      "Время создания (Timestamp)."
-    ];
+  function formatSingleChoiceText(inputText) {
+    const choices = inputText.split('\n').map(line => line.trim()).filter(line => line);
 
     const problemMarker = {
       content: {
