@@ -1,10 +1,152 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Форматирование текста для платформы</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #EFF0E9;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background-color: #FC6736;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-grow: 1;
+      padding: 20px;
+      width: 100%;
+    }
+    form, .result-container, .dialog-container, .macaroni-container, .autotest-container {
+      background: white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 800px;
+    }
+    form label {
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+    textarea, input[type="text"], input[type="url"] {
+      width: 100%;
+      padding: 15px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      resize: vertical;
+    }
+    button {
+      background-color: #FC6736;
+      color: white;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      display: inline-block;
+    }
+    button:hover {
+      background-color: #124EA8;
+    }
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    .result pre {
+      background: #f5f5f5;
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 5px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      font-size: 1rem;
+      font-family: 'Roboto Mono', monospace;
+      color: #333;
+      width: 100%;
+      max-width: 100%;
+      overflow: auto;
+      box-sizing: border-box;
+      margin: 0;
+      max-height: 300px;
+    }
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #0DA251;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: none;
+    }
+    .welcome-notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #124EA8;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: none;
+      z-index: 1000;
+    }
+    footer {
+      background-color: #FC6736;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      margin-top: auto;
+    }
+    footer a {
+      color: white;
+      text-decoration: none;
+    }
+    .hidden {
+      display: none;
+    }
+    .button-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .button-container button {
+      margin: 5px;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -60,6 +202,24 @@
           <pre class="result" id="test-result">Прямо тут</pre>
         </div>
       </div>
+      <div id="macaroni-container" class="hidden">
+        <form id="macaroni-form">
+          <label for="left-input">Левая часть</label>
+          <textarea id="left-input" name="left" placeholder="Введите текст левой части"></textarea>
+          <label for="right-input">Правая часть</label>
+          <textarea id="right-input" name="right" placeholder="Введите текст правой части"></textarea>
+          <label for="answer-input">Правильный ответ</label>
+          <textarea id="answer-input" name="answer" placeholder="Введите правильные ответы в формате (0,3),(1,4)"></textarea>
+          <button type="submit">Форматировать</button>
+        </form>
+        <div id="macaroni-result-container" class="result-container hidden">
+          <div class="result-header">
+            <p>Здесь будет результат:</p>
+            <button id="macaroni-copy-button">Скопировать результат</button>
+          </div>
+          <pre class="result" id="macaroni-result">Прямо тут</pre>
+        </div>
+      </div>
     </div>
     <div id="autotests-container" class="hidden">
       <form id="autotests-form">
@@ -96,6 +256,327 @@
     <br>
     <p>Дальше больше 🙂</p>
   </div>
-  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const mathForm = document.getElementById('math-form');
+      const result = document.querySelector('.result');
+      const dialogContainer = document.querySelector('.dialog-container');
+      const dialogOutput = document.querySelector('.dialog');
+      const copyButton = document.getElementById('copy-button');
+      const copyDialogButton = document.getElementById('copy-dialog-button');
+      const notification = document.getElementById('notification');
+      const welcomeNotification = document.getElementById('welcome-notification');
+
+      const mathButton = document.getElementById('mathematics-button');
+      const testsButton = document.getElementById('tests-button');
+      const autotestsButton = document.getElementById('autotests-button');
+      const mathContainer = document.getElementById('mathematics-container');
+      const testsContainer = document.getElementById('tests-container');
+      const autotestsContainer = document.getElementById('autotests-container');
+
+      const problemMarkerButton = document.getElementById('problem-marker-button');
+      const macaroniButton = document.getElementById('macaroni-button');
+      const problemMarkerContainer = document.getElementById('problem-marker-container');
+      const singleChoiceButton = document.getElementById('single-choice-button');
+      const multipleChoiceButton = document.getElementById('multiple-choice-button');
+      const problemForm = document.getElementById('problem-form');
+      const testResult = document.getElementById('test-result');
+      const testCopyButton = document.getElementById('test-copy-button');
+      const resultContainer = document.getElementById('result-container');
+
+      const macaroniContainer = document.getElementById('macaroni-container');
+      const macaroniForm = document.getElementById('macaroni-form');
+      const macaroniResult = document.getElementById('macaroni-result');
+      const macaroniCopyButton = document.getElementById('macaroni-copy-button');
+      const macaroniResultContainer = document.getElementById('macaroni-result-container');
+
+      const autotestsForm = document.getElementById('autotests-form');
+      const autotestResult = document.getElementById('autotest-result');
+      const autotestCopyButton = document.getElementById('autotest-copy-button');
+
+      let currentFormat = 'single'; // Default format
+
+      mathButton.addEventListener('click', () => {
+        mathContainer.classList.remove('hidden');
+        testsContainer.classList.add('hidden');
+        autotestsContainer.classList.add('hidden');
+      });
+
+      testsButton.addEventListener('click', () => {
+        testsContainer.classList.remove('hidden');
+        mathContainer.classList.add('hidden');
+        autotestsContainer.classList.add('hidden');
+      });
+
+      autotestsButton.addEventListener('click', () => {
+        autotestsContainer.classList.remove('hidden');
+        mathContainer.classList.add('hidden');
+        testsContainer.classList.add('hidden');
+      });
+
+      problemMarkerButton.addEventListener('click', () => {
+        problemMarkerContainer.classList.remove('hidden');
+        macaroniContainer.classList.add('hidden');
+      });
+
+      macaroniButton.addEventListener('click', () => {
+        macaroniContainer.classList.remove('hidden');
+        problemMarkerContainer.classList.add('hidden');
+      });
+
+      singleChoiceButton.addEventListener('click', () => {
+        currentFormat = 'single';
+        problemForm.classList.remove('hidden');
+        resultContainer.classList.remove('hidden');
+      });
+
+      multipleChoiceButton.addEventListener('click', () => {
+        currentFormat = 'multiple';
+        problemForm.classList.remove('hidden');
+        resultContainer.classList.remove('hidden');
+      });
+
+      document.addEventListener('DOMContentLoaded', () => {
+        showWelcomeNotification();
+      });
+
+      mathForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = mathForm.text.value;
+        const formattedText = formatText(removeDialogLines(text));
+        const formattedDialog = formatDialog(text);
+        
+        result.textContent = formattedText;
+
+        if (formattedDialog) {
+          dialogOutput.textContent = formattedDialog;
+          dialogContainer.style.display = 'block';
+        } else {
+          dialogContainer.style.display = 'none';
+        }
+      });
+
+      problemForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = problemForm['test-text'].value;
+        const formattedText = currentFormat === 'single' ? formatSingleChoiceText(text) : formatMultipleChoiceText(text);
+        testResult.textContent = formattedText;
+      });
+
+      macaroniForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const leftText = macaroniForm['left'].value;
+        const rightText = macaroniForm['right'].value;
+        const answerText = macaroniForm['answer'].value;
+
+        const leftChoices = cleanChoices(leftText);
+        const rightChoices = cleanChoices(rightText);
+        const correctAnswers = answerText.match(/\(\d+,\d+\)/g).map(pair => pair.replace(/[()]/g, '').split(',').map(Number));
+
+        // Перемешивание правых вариантов и обновление правильных ответов
+        const { shuffledArray: shuffledRightChoices, newCorrectAnswers } = shuffleArrayAndUpdateAnswers(rightChoices, correctAnswers);
+
+        const macaroniResultObject = {
+          content: {
+            options: {
+              left: {
+                choices: leftChoices
+              },
+              right: {
+                choices: shuffledRightChoices
+              }
+            },
+            button_text: "Узнать ответ",
+            correct_answers: [newCorrectAnswers],
+            meta: {},
+            isPasted: true
+          },
+          type: "QuizMacaroni"
+        };
+
+        macaroniResult.textContent = JSON.stringify(macaroniResultObject, null, 2);
+        macaroniResultContainer.classList.remove('hidden');
+      });
+
+      autotestsForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const tag = autotestsForm['tag'].value;
+        const path = autotestsForm['path'].value;
+        const adminLink = autotestsForm['admin-link'].value;
+        const lessonLink = autotestsForm['lesson-link'].value;
+        const autotestCode = autotestsForm['autotest-code'].value;
+
+        const formattedResult = `
+# ${tag}
+# ${path}
+# ${adminLink}
+# ${lessonLink}
+
+${autotestCode}
+        `.trim();
+
+        autotestResult.textContent = formattedResult;
+      });
+
+      copyButton.addEventListener('click', () => {
+        const text = result.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          showNotification('Результат скопирован в буфер обмена');
+        }, (err) => {
+          console.error('Ошибка при копировании: ', err);
+        });
+      });
+
+      copyDialogButton.addEventListener('click', () => {
+        const text = dialogOutput.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          showNotification('Диалог скопирован в буфер обмена');
+        }, (err) => {
+          console.error('Ошибка при копировании: ', err);
+        });
+      });
+
+      testCopyButton.addEventListener('click', () => {
+        const text = testResult.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          showNotification('Результат скопирован в буфер обмена');
+        }, (err) => {
+          console.error('Ошибка при копировании: ', err);
+        });
+      });
+
+      macaroniCopyButton.addEventListener('click', () => {
+        const text = macaroniResult.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          showNotification('Результат скопирован в буфер обмена');
+        }, (err) => {
+          console.error('Ошибка при копировании: ', err);
+        });
+      });
+
+      autotestCopyButton.addEventListener('click', () => {
+        const text = autotestResult.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          showNotification('Результат скопирован в буфер обмена');
+        }, (err) => {
+          console.error('Ошибка при копировании: ', err);
+        });
+      });
+
+      function cleanChoices(text) {
+        return text.split('\n').map(line => line.trim().replace(/^[A-Z]\)\s*/, '').replace(/^[-–]\s*/, '')).filter(line => line);
+      }
+
+      function formatText(text) {
+        const formulaRegex = /\$(.*?)\$/gs;
+        text = text.replace(formulaRegex, (match, p1) => `{formula}${p1}{/formula}`);
+
+        const asideRegex = /<aside>\s*(.*?)\s*<\/aside>/gs;
+        text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n    content: |\n    ${p1}\n{/quiz-task}`);
+        
+        const linkRegex = /https:\/\/code\.s3\.yandex\.net\/.*?\.html/g;
+        text = text.replace(linkRegex, (match) => `{iframe:${match}|minHeight:580px|minWidth:764px}`);
+        
+        return text;
+      }
+
+      function formatDialog(text) {
+        const dialogRegex = /(Макс|Ульяна):\s*(.+)/gm;
+        const content = [];
+        let match;
+        while ((match = dialogRegex.exec(text)) !== null) {
+          const [_, character, message] = match;
+          const formattedCharacter = character === 'Макс' ? 'Max-new' : 'Ulyana';
+          const formattedMessage = formatText(message.trim());
+          content.push({
+            side: 'left',
+            type: 'text',
+            message: formattedMessage,
+            character: formattedCharacter
+          });
+        }
+        return content.length ? JSON.stringify({ content, type: 'Dialog' }, null, 2) : '';
+      }
+
+      function removeDialogLines(text) {
+        return text.replace(/^(Макс|Ульяна):\s*(.+)$/gm, '').trim();
+      }
+
+      function formatSingleChoiceText(text) {
+        const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+        const choices = lines.map(line => line.replace(/^[A-Z]\)\s*/, '').replace(/^[-–]\s*/, ''));
+        const problemMarker = {
+          content: {
+            id: "44c296e3-eb80-4ae9-beb3-d8b997c37d51",
+            misc: {
+              feedback: [null, null, null, null]
+            },
+            type: "choice",
+            options: {
+              flavor: "radio",
+              choices: choices,
+              type_display: "vertical"
+            },
+            meta: {
+              correct_answers: [1]
+            }
+          },
+          type: "ProblemMarker"
+        };
+        return JSON.stringify(problemMarker, null, 2);
+      }
+
+      function formatMultipleChoiceText(text) {
+        const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+        const choices = lines.map(line => line.replace(/^[A-Z]\)\s*/, '').replace(/^[-–]\s*/, ''));
+        const problemMarker = {
+          content: {
+            id: "44c296e3-eb80-4ae9-beb3-d8b997c37d51",
+            misc: {
+              feedback: [null, null, null, null]
+            },
+            type: "choice",
+            options: {
+              flavor: "checkbox",
+              choices: choices,
+              type_display: "vertical"
+            },
+            meta: {
+              correct_answers: [1]
+            }
+          },
+          type: "ProblemMarker"
+        };
+        return JSON.stringify(problemMarker, null, 2);
+      }
+
+      function shuffleArrayAndUpdateAnswers(array, correctAnswers) {
+        const shuffledArray = [...array];
+        const newIndices = shuffledArray.map((_, index) => index);
+        for (let i = shuffledArray.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+          [newIndices[i], newIndices[j]] = [newIndices[j], newIndices[i]];
+        }
+        const newCorrectAnswers = correctAnswers.map(([leftIndex, rightIndex]) => [leftIndex, newIndices[rightIndex]]);
+        return { shuffledArray, newCorrectAnswers };
+      }
+
+      function showNotification(message) {
+        notification.textContent = message;
+        notification.style.display = 'block';
+        setTimeout(() => {
+          notification.style.display = 'none';
+        }, 3000);
+      }
+
+      function showWelcomeNotification() {
+        welcomeNotification.style.display = 'block';
+        setTimeout(() => {
+          welcomeNotification.style.display = 'none';
+        }, 8000);
+      }
+    });
+  </script>
 </body>
 </html>
