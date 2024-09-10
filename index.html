@@ -164,6 +164,7 @@
   </header>
 
   <main>
+    <!-- Навигация по разделам -->
     <div class="button-container">
       <button id="mathematics-button">Основной текст</button>
       <button id="tests-button">Тесты</button>
@@ -193,12 +194,14 @@
       </div>
     </div>
 
-    <!-- Тесты -->
+    <!-- Тесты (Маркер Проблемы и Макароны) -->
     <div id="tests-container" class="hidden">
       <div class="button-container">
         <button id="problem-marker-button">Маркер Проблемы</button>
         <button id="macaroni-button">Макароны</button>
       </div>
+
+      <!-- Маркер Проблемы -->
       <div id="problem-marker-container" class="hidden">
         <div class="button-container">
           <button id="single-choice-button">Одиночный</button>
@@ -271,12 +274,222 @@
   <div class="notification" id="notification">Результат скопирован в буфер обмена</div>
 
   <script>
+    // Логика для раздела Основной текст
     document.addEventListener('DOMContentLoaded', () => {
+      const mathForm = document.getElementById('math-form');
+      const result = document.querySelector('.result');
+      const dialogContainer = document.querySelector('.dialog-container');
+      const dialogOutput = document.querySelector('.dialog');
+      const copyButton = document.getElementById('copy-button');
+      const copyDialogButton = document.getElementById('copy-dialog-button');
+      const notification = document.getElementById('notification');
+
+      const mathButton = document.getElementById('mathematics-button');
+      const testsButton = document.getElementById('tests-button');
+      const autotestsButton = document.getElementById('autotests-button');
+      const mathContainer = document.getElementById('mathematics-container');
+      const testsContainer = document.getElementById('tests-container');
+      const autotestsContainer = document.getElementById('autotests-container');
+
+      // Переходы между разделами
+      mathButton.addEventListener('click', () => {
+        mathContainer.classList.remove('hidden');
+        testsContainer.classList.add('hidden');
+        autotestsContainer.classList.add('hidden');
+      });
+
+      testsButton.addEventListener('click', () => {
+        testsContainer.classList.remove('hidden');
+        mathContainer.classList.add('hidden');
+        autotestsContainer.classList.add('hidden');
+      });
+
+      autotestsButton.addEventListener('click', () => {
+        autotestsContainer.classList.remove('hidden');
+        mathContainer.classList.add('hidden');
+        testsContainer.classList.add('hidden');
+      });
+
+      // Форматирование основного текста
+      mathForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = mathForm.text.value;
+        const formattedText = formatText(removeDialogLines(text));
+        const formattedDialog = formatDialog(text);
+        
+        result.textContent = formattedText;
+
+        if (formattedDialog) {
+          dialogOutput.textContent = formattedDialog;
+          dialogContainer.style.display = 'block';
+        } else {
+          dialogContainer.style.display = 'none';
+        }
+      });
+
+      copyButton.addEventListener('click', () => {
+        const text = result.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          showNotification('Результат скопирован в буфер обмена');
+        }, (err) => {
+          console.error('Ошибка при копировании: ', err);
+        });
+      });
+
+      copyDialogButton.addEventListener('click', () => {
+        const text = dialogOutput.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          showNotification('Диалог скопирован в буфер обмена');
+        }, (err) => {
+          console.error('Ошибка при копировании: ', err);
+        });
+      });
+
+      function formatText(text) {
+        const formulaRegex = /\$(.*?)\$/gs;
+        text = text.replace(formulaRegex, (match, p1) => `{formula}${p1}{/formula}`);
+
+        const asideRegex = /<aside>\s*(.*?)\s*<\/aside>/gs;
+        text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n    content: |\n    ${p1}\n{/quiz-task}`);
+        
+        const linkRegex = /https:\/\/code\.s3\.yandex\.net\/.*?\.html/g;
+        text = text.replace(linkRegex, (match) => `{iframe:${match}|minHeight:580px|minWidth:764px}`);
+        
+        return text;
+      }
+
+      function formatDialog(text) {
+        const dialogRegex = /(Макс|Ульяна):\s*(.+)/gm;
+        const content = [];
+        let match;
+        while ((match = dialogRegex.exec(text)) !== null) {
+          const [_, character, message] = match;
+          const formattedCharacter = character === 'Макс' ? 'Max-new' : 'Ulyana';
+          const formattedMessage = formatText(message.trim());
+          content.push({
+            side: 'left',
+            type: 'text',
+            message: formattedMessage,
+            character: formattedCharacter
+          });
+        }
+        return content.length ? JSON.stringify({ content, type: 'Dialog' }, null, 2) : '';
+      }
+
+      function removeDialogLines(text) {
+        return text.replace(/^(Макс|Ульяна):\s*(.+)$/gm, '').trim();
+      }
+
+      function showNotification(message) {
+        notification.textContent = message;
+        notification.classList.add('show');
+        setTimeout(() => {
+          notification.classList.remove('show');
+        }, 3000);
+      }
+
+      // Форматирование тестов (Маркер Проблемы)
+      const problemMarkerButton = document.getElementById('problem-marker-button');
+      const macaroniButton = document.getElementById('macaroni-button');
+      const problemMarkerContainer = document.getElementById('problem-marker-container');
+      const singleChoiceButton = document.getElementById('single-choice-button');
+      const multipleChoiceButton = document.getElementById('multiple-choice-button');
+      const problemForm = document.getElementById('problem-form');
+      const testResult = document.getElementById('test-result');
+      const testCopyButton = document.getElementById('test-copy-button');
+      const resultContainer = document.getElementById('result-container');
+
+      problemMarkerButton.addEventListener('click', () => {
+        problemMarkerContainer.classList.remove('hidden');
+        macaroniContainer.classList.add('hidden');
+      });
+
+      singleChoiceButton.addEventListener('click', () => {
+        currentFormat = 'single';
+        problemForm.classList.remove('hidden');
+        resultContainer.classList.remove('hidden');
+      });
+
+      multipleChoiceButton.addEventListener('click', () => {
+        currentFormat = 'multiple';
+        problemForm.classList.remove('hidden');
+        resultContainer.classList.remove('hidden');
+      });
+
+      problemForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = problemForm['test-text'].value;
+        const formattedText = currentFormat === 'single' ? formatSingleChoiceText(text) : formatMultipleChoiceText(text);
+        testResult.textContent = formattedText;
+      });
+
+      testCopyButton.addEventListener('click', () => {
+        const text = testResult.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          showNotification('Результат скопирован в буфер обмена');
+        }, (err) => {
+          console.error('Ошибка при копировании: ', err);
+        });
+      });
+
+      function formatSingleChoiceText(text) {
+        const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+        const choices = lines.map(line => line.replace(/^[A-Z]\)\s*/, '').replace(/^[-–]\s*/, ''));
+        const problemMarker = {
+          content: {
+            id: "44c296e3-eb80-4ae9-beb3-d8b997c37d51",
+            misc: {
+              feedback: [null, null, null, null]
+            },
+            type: "choice",
+            options: {
+              flavor: "radio",
+              choices: choices,
+              type_display: "vertical"
+            },
+            meta: {
+              correct_answers: [1]
+            }
+          },
+          type: "ProblemMarker"
+        };
+        return JSON.stringify(problemMarker, null, 2);
+      }
+
+      function formatMultipleChoiceText(text) {
+        const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+        const choices = lines.map(line => line.replace(/^[A-Z]\)\s*/, '').replace(/^[-–]\s*/, ''));
+        const problemMarker = {
+          content: {
+            id: "44c296e3-eb80-4ae9-beb3-d8b997c37d51",
+            misc: {
+              feedback: [null, null, null, null]
+            },
+            type: "choice",
+            options: {
+              flavor: "checkbox",
+              choices: choices,
+              type_display: "vertical"
+            },
+            meta: {
+              correct_answers: [1]
+            }
+          },
+          type: "ProblemMarker"
+        };
+        return JSON.stringify(problemMarker, null, 2);
+      }
+
+      // Форматирование квиза "Макароны" с перемешиванием вариантов
       const macaroniForm = document.getElementById('macaroni-form');
       const macaroniResult = document.getElementById('macaroni-result');
-      const macaroniResultContainer = document.getElementById('macaroni-result-container');
       const macaroniCopyButton = document.getElementById('macaroni-copy-button');
-      const notification = document.getElementById('notification');
+      const macaroniResultContainer = document.getElementById('macaroni-result-container');
+
+      macaroniButton.addEventListener('click', () => {
+        macaroniContainer.classList.remove('hidden');
+        problemMarkerContainer.classList.add('hidden');
+      });
 
       macaroniForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -340,14 +553,6 @@
         }
         const newCorrectAnswers = correctAnswers.map(([leftIndex, rightIndex]) => [leftIndex, newIndices[rightIndex]]);
         return { shuffledArray, newCorrectAnswers };
-      }
-
-      function showNotification(message) {
-        notification.textContent = message;
-        notification.classList.add('show');
-        setTimeout(() => {
-          notification.classList.remove('show');
-        }, 3000);
       }
     });
   </script>
