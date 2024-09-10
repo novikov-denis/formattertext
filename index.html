@@ -38,7 +38,7 @@
       padding: 20px;
       width: 100%;
     }
-    form, .result-container, .dialog-container, .macaroni-container, .autotest-container {
+    form, .result-container, .macaroni-container, .autotest-container {
       background: white;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       border-radius: 10px;
@@ -46,10 +46,6 @@
       margin-bottom: 20px;
       width: 100%;
       max-width: 800px;
-    }
-    form label {
-      font-weight: 500;
-      margin-bottom: 10px;
     }
     textarea, input[type="text"], input[type="url"] {
       width: 100%;
@@ -68,11 +64,47 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      transition: background-color 0.3s;
-      display: inline-block;
+      transition: background-color 0.3s, box-shadow 0.3s;
     }
     button:hover {
       background-color: #124EA8;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    .button-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #0DA251;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .notification.show {
+      opacity: 1;
+    }
+    footer {
+      background-color: #FC6736;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      margin-top: auto;
+    }
+    footer a {
+      color: white;
+      text-decoration: none;
+    }
+    .hidden {
+      display: none;
     }
     .result-header {
       display: flex;
@@ -99,53 +131,6 @@
       margin: 0;
       max-height: 300px;
     }
-    .notification {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: #0DA251;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 5px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      display: none;
-    }
-    .welcome-notification {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: #124EA8;
-      color: white;
-      padding: 15px 20px;
-      border-radius: 5px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      display: none;
-      z-index: 1000;
-    }
-    footer {
-      background-color: #FC6736;
-      color: white;
-      text-align: center;
-      padding: 10px;
-      margin-top: auto;
-    }
-    footer a {
-      color: white;
-      text-decoration: none;
-    }
-    .hidden {
-      display: none;
-    }
-    .button-container {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .button-container button {
-      margin: 5px;
-    }
   </style>
 </head>
 <body>
@@ -158,6 +143,7 @@
       <button id="tests-button">Тесты</button>
       <button id="autotests-button">Автотесты</button>
     </div>
+
     <div id="mathematics-container" class="hidden">
       <form id="math-form">
         <label for="text-input">Введите ваш текст</label>
@@ -179,6 +165,7 @@
         <pre class="dialog">Здесь будет форматированный диалог</pre>
       </div>
     </div>
+
     <div id="tests-container" class="hidden">
       <div class="button-container">
         <button id="problem-marker-button">Маркер Проблемы</button>
@@ -221,6 +208,7 @@
         </div>
       </div>
     </div>
+
     <div id="autotests-container" class="hidden">
       <form id="autotests-form">
         <label for="tag-input">Тег команды тестописателей</label>
@@ -233,7 +221,7 @@
         <input type="url" id="lesson-link-input" name="lesson-link" placeholder="Введите ссылку">
         <label for="autotest-code-input">Код автотеста</label>
         <textarea id="autotest-code-input" name="autotest-code" placeholder="Введите код автотеста"></textarea>
-        <button type="submit">Форматнуть 🔃</button>
+        <button type="submit">Форматировать</button>
       </form>
       <div class="result-container">
         <div class="result-header">
@@ -248,14 +236,7 @@
     <p>Авторы – <a href="https://t.me/novikovdenis" target="_blank">@novikovdenis</a> 😺 и ChatGPT 🤖 для Практикума с любовью</p>
   </footer>
   <div class="notification" id="notification">Результат скопирован в буфер обмена</div>
-  <div class="welcome-notification" id="welcome-notification">
-    <p>Привет 👋🏼</p>
-    <br>
-    <p>Что нового?</p>
-    <p>- Теперь я помогаю формировать код для автотестов</p>
-    <br>
-    <p>Дальше больше 🙂</p>
-  </div>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const mathForm = document.getElementById('math-form');
@@ -265,7 +246,6 @@
       const copyButton = document.getElementById('copy-button');
       const copyDialogButton = document.getElementById('copy-dialog-button');
       const notification = document.getElementById('notification');
-      const welcomeNotification = document.getElementById('welcome-notification');
 
       const mathButton = document.getElementById('mathematics-button');
       const testsButton = document.getElementById('tests-button');
@@ -336,10 +316,6 @@
         resultContainer.classList.remove('hidden');
       });
 
-      document.addEventListener('DOMContentLoaded', () => {
-        showWelcomeNotification();
-      });
-
       mathForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const text = mathForm.text.value;
@@ -373,28 +349,28 @@
         const rightChoices = cleanChoices(rightText);
         const correctAnswers = answerText.match(/\(\d+,\d+\)/g).map(pair => pair.replace(/[()]/g, '').split(',').map(Number));
 
-        // Перемешивание правых вариантов и обновление правильных ответов
-        const { shuffledArray: shuffledRightChoices, newCorrectAnswers } = shuffleArrayAndUpdateAnswers(rightChoices, correctAnswers);
-
-        const macaroniResultObject = {
+        const quizMacaroni = {
           content: {
+            id: "b463ccdc-715a-4dd8-9d2a-1257e9c06563", // Статический ID
+            question: "",
+            feedback: "",
+            button_text: "Проверить",
+            isPasted: true,
             options: {
               left: {
                 choices: leftChoices
               },
               right: {
-                choices: shuffledRightChoices
+                choices: rightChoices
               }
             },
-            button_text: "Узнать ответ",
-            correct_answers: [newCorrectAnswers],
-            meta: {},
-            isPasted: true
+            correct_answers: [correctAnswers],
+            meta: {}
           },
           type: "QuizMacaroni"
         };
 
-        macaroniResult.textContent = JSON.stringify(macaroniResultObject, null, 2);
+        macaroniResult.textContent = JSON.stringify(quizMacaroni, null, 2);
         macaroniResultContainer.classList.remove('hidden');
       });
 
@@ -464,7 +440,7 @@ ${autotestCode}
       });
 
       function cleanChoices(text) {
-        return text.split('\n').map(line => line.trim().replace(/^[A-Z]\)\s*/, '').replace(/^[-–]\s*/, '')).filter(line => line);
+        return text.split('\n').map(line => line.trim()).filter(line => line);
       }
 
       function formatText(text) {
@@ -550,31 +526,12 @@ ${autotestCode}
         return JSON.stringify(problemMarker, null, 2);
       }
 
-      function shuffleArrayAndUpdateAnswers(array, correctAnswers) {
-        const shuffledArray = [...array];
-        const newIndices = shuffledArray.map((_, index) => index);
-        for (let i = shuffledArray.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
-          [newIndices[i], newIndices[j]] = [newIndices[j], newIndices[i]];
-        }
-        const newCorrectAnswers = correctAnswers.map(([leftIndex, rightIndex]) => [leftIndex, newIndices[rightIndex]]);
-        return { shuffledArray, newCorrectAnswers };
-      }
-
       function showNotification(message) {
         notification.textContent = message;
-        notification.style.display = 'block';
+        notification.classList.add('show');
         setTimeout(() => {
-          notification.style.display = 'none';
+          notification.classList.remove('show');
         }, 3000);
-      }
-
-      function showWelcomeNotification() {
-        welcomeNotification.style.display = 'block';
-        setTimeout(() => {
-          welcomeNotification.style.display = 'none';
-        }, 8000);
       }
     });
   </script>
