@@ -5,13 +5,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Форматирование текста для платформы</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+
+  <!-- Подключение локального шрифта Druk Wide Cyr Super -->
   <style>
+    @font-face {
+      font-family: 'Druk Wide Cyr Super';
+      src: url('fonts/DrukWideCyrSuper.otf') format('opentype');
+      font-weight: normal;
+      font-style: normal;
+    }
+    
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
+
     body {
       font-family: 'Roboto', sans-serif;
       background-color: #EFF0E9;
@@ -20,16 +29,20 @@
       flex-direction: column;
       min-height: 100vh;
     }
+
     header {
       background-color: #FC6736;
       color: white;
       padding: 20px;
       text-align: center;
     }
+
     header h1 {
       margin: 0;
       font-size: 2rem;
+      font-family: 'Druk Wide Cyr Super', sans-serif; /* Применение нового шрифта */
     }
+
     main {
       display: flex;
       flex-direction: column;
@@ -38,6 +51,7 @@
       padding: 20px;
       width: 100%;
     }
+
     form, .result-container, .macaroni-container, .autotest-container {
       background: white;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -47,6 +61,7 @@
       width: 100%;
       max-width: 800px;
     }
+
     textarea, input[type="text"], input[type="url"] {
       width: 100%;
       padding: 15px;
@@ -56,6 +71,7 @@
       margin-bottom: 20px;
       resize: vertical;
     }
+
     button {
       background-color: #FC6736;
       color: white;
@@ -66,10 +82,12 @@
       cursor: pointer;
       transition: background-color 0.3s, box-shadow 0.3s;
     }
+
     button:hover {
       background-color: #124EA8;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
+
     .button-container {
       display: flex;
       gap: 10px;
@@ -77,6 +95,7 @@
       flex-wrap: wrap;
       justify-content: center;
     }
+
     .notification {
       position: fixed;
       bottom: 20px;
@@ -89,9 +108,11 @@
       opacity: 0;
       transition: opacity 0.3s;
     }
+
     .notification.show {
       opacity: 1;
     }
+
     footer {
       background-color: #FC6736;
       color: white;
@@ -99,13 +120,16 @@
       padding: 10px;
       margin-top: auto;
     }
+
     footer a {
       color: white;
       text-decoration: none;
     }
+
     .hidden {
       display: none;
     }
+
     .result-header {
       display: flex;
       justify-content: space-between;
@@ -113,6 +137,7 @@
       width: 100%;
       margin-bottom: 10px;
     }
+
     .result pre {
       background: #f5f5f5;
       border: 1px solid #ccc;
@@ -137,6 +162,7 @@
   <header>
     <h1>Форматирование текста для платформы</h1>
   </header>
+
   <main>
     <div class="button-container">
       <button id="mathematics-button">Основной текст</button>
@@ -144,6 +170,7 @@
       <button id="autotests-button">Автотесты</button>
     </div>
 
+    <!-- Основной текст -->
     <div id="mathematics-container" class="hidden">
       <form id="math-form">
         <label for="text-input">Введите ваш текст</label>
@@ -166,6 +193,7 @@
       </div>
     </div>
 
+    <!-- Тесты -->
     <div id="tests-container" class="hidden">
       <div class="button-container">
         <button id="problem-marker-button">Маркер Проблемы</button>
@@ -189,6 +217,8 @@
           <pre class="result" id="test-result">Прямо тут</pre>
         </div>
       </div>
+
+      <!-- Макароны -->
       <div id="macaroni-container" class="hidden">
         <form id="macaroni-form">
           <label for="left-input">Левая часть</label>
@@ -209,6 +239,7 @@
       </div>
     </div>
 
+    <!-- Автотесты -->
     <div id="autotests-container" class="hidden">
       <form id="autotests-form">
         <label for="tag-input">Тег команды тестописателей</label>
@@ -232,126 +263,38 @@
       </div>
     </div>
   </main>
+
   <footer>
-    <p>Авторы – <a href="https://t.me/novikovdenis" target="_blank">@novikovdenis</a> 😺 и ChatGPT 🤖 для Практикума с любовью</p>
+    <p>Авторы – <a href="https://t.me/novikovdenis" target="_blank">@novиковdenis</a> 😺 и ChatGPT 🤖 для Практикума с любовью</p>
   </footer>
+  
   <div class="notification" id="notification">Результат скопирован в буфер обмена</div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const mathForm = document.getElementById('math-form');
-      const result = document.querySelector('.result');
-      const dialogContainer = document.querySelector('.dialog-container');
-      const dialogOutput = document.querySelector('.dialog');
-      const copyButton = document.getElementById('copy-button');
-      const copyDialogButton = document.getElementById('copy-dialog-button');
-      const notification = document.getElementById('notification');
-
-      const mathButton = document.getElementById('mathematics-button');
-      const testsButton = document.getElementById('tests-button');
-      const autotestsButton = document.getElementById('autotests-button');
-      const mathContainer = document.getElementById('mathematics-container');
-      const testsContainer = document.getElementById('tests-container');
-      const autotestsContainer = document.getElementById('autotests-container');
-
-      const problemMarkerButton = document.getElementById('problem-marker-button');
-      const macaroniButton = document.getElementById('macaroni-button');
-      const problemMarkerContainer = document.getElementById('problem-marker-container');
-      const singleChoiceButton = document.getElementById('single-choice-button');
-      const multipleChoiceButton = document.getElementById('multiple-choice-button');
-      const problemForm = document.getElementById('problem-form');
-      const testResult = document.getElementById('test-result');
-      const testCopyButton = document.getElementById('test-copy-button');
-      const resultContainer = document.getElementById('result-container');
-
-      const macaroniContainer = document.getElementById('macaroni-container');
       const macaroniForm = document.getElementById('macaroni-form');
       const macaroniResult = document.getElementById('macaroni-result');
-      const macaroniCopyButton = document.getElementById('macaroni-copy-button');
       const macaroniResultContainer = document.getElementById('macaroni-result-container');
-
-      const autotestsForm = document.getElementById('autotests-form');
-      const autotestResult = document.getElementById('autotest-result');
-      const autotestCopyButton = document.getElementById('autotest-copy-button');
-
-      let currentFormat = 'single'; // Default format
-
-      mathButton.addEventListener('click', () => {
-        mathContainer.classList.remove('hidden');
-        testsContainer.classList.add('hidden');
-        autotestsContainer.classList.add('hidden');
-      });
-
-      testsButton.addEventListener('click', () => {
-        testsContainer.classList.remove('hidden');
-        mathContainer.classList.add('hidden');
-        autotestsContainer.classList.add('hidden');
-      });
-
-      autotestsButton.addEventListener('click', () => {
-        autotestsContainer.classList.remove('hidden');
-        mathContainer.classList.add('hidden');
-        testsContainer.classList.add('hidden');
-      });
-
-      problemMarkerButton.addEventListener('click', () => {
-        problemMarkerContainer.classList.remove('hidden');
-        macaroniContainer.classList.add('hidden');
-      });
-
-      macaroniButton.addEventListener('click', () => {
-        macaroniContainer.classList.remove('hidden');
-        problemMarkerContainer.classList.add('hidden');
-      });
-
-      singleChoiceButton.addEventListener('click', () => {
-        currentFormat = 'single';
-        problemForm.classList.remove('hidden');
-        resultContainer.classList.remove('hidden');
-      });
-
-      multipleChoiceButton.addEventListener('click', () => {
-        currentFormat = 'multiple';
-        problemForm.classList.remove('hidden');
-        resultContainer.classList.remove('hidden');
-      });
-
-      mathForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const text = mathForm.text.value;
-        const formattedText = formatText(removeDialogLines(text));
-        const formattedDialog = formatDialog(text);
-        
-        result.textContent = formattedText;
-
-        if (formattedDialog) {
-          dialogOutput.textContent = formattedDialog;
-          dialogContainer.style.display = 'block';
-        } else {
-          dialogContainer.style.display = 'none';
-        }
-      });
-
-      problemForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const text = problemForm['test-text'].value;
-        const formattedText = currentFormat === 'single' ? formatSingleChoiceText(text) : formatMultipleChoiceText(text);
-        testResult.textContent = formattedText;
-      });
+      const macaroniCopyButton = document.getElementById('macaroni-copy-button');
+      const notification = document.getElementById('notification');
 
       macaroniForm.addEventListener('submit', (e) => {
         e.preventDefault();
+
         const leftText = macaroniForm['left'].value;
         const rightText = macaroniForm['right'].value;
         const answerText = macaroniForm['answer'].value;
 
         const leftChoices = cleanChoices(leftText);
         const rightChoices = cleanChoices(rightText);
+
         const correctAnswers = answerText.match(/\(\d+,\d+\)/g).map(pair => pair.replace(/[()]/g, '').split(',').map(Number));
+
+        const { shuffledArray: shuffledRightChoices, newCorrectAnswers } = shuffleArrayAndUpdateAnswers(rightChoices, correctAnswers);
 
         const quizMacaroni = {
           content: {
-            id: "b463ccdc-715a-4dd8-9d2a-1257e9c06563", // Статический ID
+            id: "b463ccdc-715a-4dd8-9d2a-1257e9c06563",
             question: "",
             feedback: "",
             button_text: "Проверить",
@@ -361,10 +304,10 @@
                 choices: leftChoices
               },
               right: {
-                choices: rightChoices
+                choices: shuffledRightChoices
               }
             },
-            correct_answers: [correctAnswers],
+            correct_answers: [newCorrectAnswers],
             meta: {}
           },
           type: "QuizMacaroni"
@@ -372,53 +315,6 @@
 
         macaroniResult.textContent = JSON.stringify(quizMacaroni, null, 2);
         macaroniResultContainer.classList.remove('hidden');
-      });
-
-      autotestsForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const tag = autotestsForm['tag'].value;
-        const path = autotestsForm['path'].value;
-        const adminLink = autotestsForm['admin-link'].value;
-        const lessonLink = autotestsForm['lesson-link'].value;
-        const autotestCode = autotestsForm['autotest-code'].value;
-
-        const formattedResult = `
-# ${tag}
-# ${path}
-# ${adminLink}
-# ${lessonLink}
-
-${autotestCode}
-        `.trim();
-
-        autotestResult.textContent = formattedResult;
-      });
-
-      copyButton.addEventListener('click', () => {
-        const text = result.textContent;
-        navigator.clipboard.writeText(text).then(() => {
-          showNotification('Результат скопирован в буфер обмена');
-        }, (err) => {
-          console.error('Ошибка при копировании: ', err);
-        });
-      });
-
-      copyDialogButton.addEventListener('click', () => {
-        const text = dialogOutput.textContent;
-        navigator.clipboard.writeText(text).then(() => {
-          showNotification('Диалог скопирован в буфер обмена');
-        }, (err) => {
-          console.error('Ошибка при копировании: ', err);
-        });
-      });
-
-      testCopyButton.addEventListener('click', () => {
-        const text = testResult.textContent;
-        navigator.clipboard.writeText(text).then(() => {
-          showNotification('Результат скопирован в буфер обмена');
-        }, (err) => {
-          console.error('Ошибка при копировании: ', err);
-        });
       });
 
       macaroniCopyButton.addEventListener('click', () => {
@@ -430,100 +326,20 @@ ${autotestCode}
         });
       });
 
-      autotestCopyButton.addEventListener('click', () => {
-        const text = autotestResult.textContent;
-        navigator.clipboard.writeText(text).then(() => {
-          showNotification('Результат скопирован в буфер обмена');
-        }, (err) => {
-          console.error('Ошибка при копировании: ', err);
-        });
-      });
-
       function cleanChoices(text) {
         return text.split('\n').map(line => line.trim()).filter(line => line);
       }
 
-      function formatText(text) {
-        const formulaRegex = /\$(.*?)\$/gs;
-        text = text.replace(formulaRegex, (match, p1) => `{formula}${p1}{/formula}`);
-
-        const asideRegex = /<aside>\s*(.*?)\s*<\/aside>/gs;
-        text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n    content: |\n    ${p1}\n{/quiz-task}`);
-        
-        const linkRegex = /https:\/\/code\.s3\.yandex\.net\/.*?\.html/g;
-        text = text.replace(linkRegex, (match) => `{iframe:${match}|minHeight:580px|minWidth:764px}`);
-        
-        return text;
-      }
-
-      function formatDialog(text) {
-        const dialogRegex = /(Макс|Ульяна):\s*(.+)/gm;
-        const content = [];
-        let match;
-        while ((match = dialogRegex.exec(text)) !== null) {
-          const [_, character, message] = match;
-          const formattedCharacter = character === 'Макс' ? 'Max-new' : 'Ulyana';
-          const formattedMessage = formatText(message.trim());
-          content.push({
-            side: 'left',
-            type: 'text',
-            message: formattedMessage,
-            character: formattedCharacter
-          });
+      function shuffleArrayAndUpdateAnswers(array, correctAnswers) {
+        const shuffledArray = [...array];
+        const newIndices = shuffledArray.map((_, index) => index);
+        for (let i = shuffledArray.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+          [newIndices[i], newIndices[j]] = [newIndices[j], newIndices[i]];
         }
-        return content.length ? JSON.stringify({ content, type: 'Dialog' }, null, 2) : '';
-      }
-
-      function removeDialogLines(text) {
-        return text.replace(/^(Макс|Ульяна):\s*(.+)$/gm, '').trim();
-      }
-
-      function formatSingleChoiceText(text) {
-        const lines = text.split('\n').map(line => line.trim()).filter(line => line);
-        const choices = lines.map(line => line.replace(/^[A-Z]\)\s*/, '').replace(/^[-–]\s*/, ''));
-        const problemMarker = {
-          content: {
-            id: "44c296e3-eb80-4ae9-beb3-d8b997c37d51",
-            misc: {
-              feedback: [null, null, null, null]
-            },
-            type: "choice",
-            options: {
-              flavor: "radio",
-              choices: choices,
-              type_display: "vertical"
-            },
-            meta: {
-              correct_answers: [1]
-            }
-          },
-          type: "ProblemMarker"
-        };
-        return JSON.stringify(problemMarker, null, 2);
-      }
-
-      function formatMultipleChoiceText(text) {
-        const lines = text.split('\n').map(line => line.trim()).filter(line => line);
-        const choices = lines.map(line => line.replace(/^[A-Z]\)\s*/, '').replace(/^[-–]\s*/, ''));
-        const problemMarker = {
-          content: {
-            id: "44c296e3-eb80-4ae9-beb3-d8b997c37d51",
-            misc: {
-              feedback: [null, null, null, null]
-            },
-            type: "choice",
-            options: {
-              flavor: "checkbox",
-              choices: choices,
-              type_display: "vertical"
-            },
-            meta: {
-              correct_answers: [1]
-            }
-          },
-          type: "ProblemMarker"
-        };
-        return JSON.stringify(problemMarker, null, 2);
+        const newCorrectAnswers = correctAnswers.map(([leftIndex, rightIndex]) => [leftIndex, newIndices[rightIndex]]);
+        return { shuffledArray, newCorrectAnswers };
       }
 
       function showNotification(message) {
