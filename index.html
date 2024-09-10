@@ -9,8 +9,8 @@
   <!-- Подключение локального шрифта Druk Wide Cyr Super -->
   <style>
     @font-face {
-    font-family: 'Druk Wide';
-    src: url('Druk Wide Cyr Super.otf') format('opentype');
+      font-family: 'Druk Wide Cyr Super';
+      src: url('Druk Wide Cyr Super.otf') format('opentype');
     }
     
     * {
@@ -38,7 +38,7 @@
     header h1 {
       margin: 0;
       font-size: 2rem;
-      font-family: 'Druk Wide', Arial, sans-serif;
+      font-family: 'Druk Wide Cyr Super', sans-serif; /* Применение нового шрифта */
     }
 
     main {
@@ -308,15 +308,208 @@
         testsContainer.classList.add('hidden');
       });
 
-      // Исправлено: отображение контейнера "Макароны" при нажатии
-      const macaroniButton = document.getElementById('macaroni-button');
-      const macaroniContainer = document.getElementById('macaroni-container');
-      macaroniButton.addEventListener('click', () => {
-        macaroniContainer.classList.remove('hidden');
-        problemMarkerContainer.classList.add('hidden');
+      // Логика работы с основным текстом
+      mathForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = mathForm.text.value;
+        const formattedText = formatText(removeDialogLines(text));
+        const formattedDialog = formatDialog(text);
+        
+        result.textContent = formattedText;
+
+        if (formattedDialog) {
+          dialogOutput.textContent = formattedDialog;
+          dialogContainer.style.display = 'block';
+        } else {
+          dialogContainer.style.display = 'none';
+        }
       });
 
-      // Исправлено: предотвратить обновление страницы при отправке формы автотестов
+      copyButton.addEventListener('click', () => {
+        const text = result.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          showNotification('Результат скопирован в буфер обмена');
+        }, (err) => {
+          console.error('Ошибка при копировании: ', err);
+        });
+      });
+
+      copyDialogButton.addEventListener('click', () => {
+        const text = dialogOutput.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          showNotification('Диалог скопирован в буфер обмена');
+        }, (err) => {
+          console.error('Ошибка при копировании: ', err);
+        });
+      });
+
+      function formatText(text) {
+        const formulaRegex = /\$(.*?)\$/gs;
+        text = text.replace(formulaRegex, (match, p1) => `{formula}${p1}{/formula}`);
+
+        const asideRegex = /<aside>\s*(.*?)\s*<\/aside>/gs;
+        text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n    content: |\n    ${p1}\n{/quiz-task}`);
+        
+        const linkRegex = /https:\/\/code\.s3\.yandex\.net\/.*?\.html/g;
+        text = text.replace(linkRegex, (match) => `{iframe:${match}|minHeight:580px|minWidth:764px}`);
+        
+        return text;
+      }
+
+      function formatDialog(text) {
+        const dialogRegex = /(Макс|Ульяна):\s*(.+)/gm;
+        const content = [];
+        let match;
+        while ((match = dialogRegex.exec(text)) !== null) {
+          const [_, character, message] = match;
+          const formattedCharacter = character === 'Макс' ? 'Max-new' : 'Ulyana';
+          const formattedMessage = formatText(message.trim());
+          content.push({
+            side: 'left',
+            type: 'text',
+            message: formattedMessage,
+            character: formattedCharacter
+          });
+        }
+        return content.length ? JSON.stringify({ content, type: 'Dialog' }, null, 2) : '';
+      }
+
+      function removeDialogLines(text) {
+        return text.replace(/^(Макс|Ульяна):\s*(.+)$/gm, '').trim();
+      }
+
+      // Логика для раздела Маркер Проблемы
+      const problemMarkerButton = document.getElementById('problem-marker-button');
+      const macaroniButton = document.getElementById('macaroni-button');
+      const problemMarkerContainer = document.getElementById('problem-marker-container');
+      const singleChoiceButton = document.getElementById('single-choice-button');
+      const multipleChoiceButton = document.getElementById('multiple-choice-button');
+      const problemForm = document.getElementById('problem-form');
+      const testResult = document.getElementById('test-result');
+      const testCopyButton = document.getElementById('test-copy-button');
+      const resultContainer = document.getElementById('result-container');
+
+      problemMarkerButton.addEventListener('click', () => {
+        problemMarkerContainer.classList.remove('hidden');
+        macaroniContainer.classList.add('hidden');
+      });
+
+      singleChoiceButton.addEventListener('click', () => {
+        problemForm.classList.remove('hidden');
+        resultContainer.classList.remove('hidden');
+      });
+
+      multipleChoiceButton.addEventListener('click', () => {
+        problemForm.classList.remove('hidden');
+        resultContainer.classList.remove('hidden');
+      });
+
+      problemForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = problemForm['test-text'].value;
+        const formattedText = formatSingleChoiceText(text);
+        testResult.textContent = formattedText;
+      });
+
+      testCopyButton.addEventListener('click', () => {
+        const text = testResult.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          showNotification('Результат скопирован в буфер обмена');
+        }, (err) => {
+          console.error('Ошибка при копировании: ', err);
+        });
+      });
+
+      function formatSingleChoiceText(text) {
+        const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+        const choices = lines.map(line => line.replace(/^[A-Z]\)\s*/, '').replace(/^[-–]\s*/, ''));
+        const problemMarker = {
+          content: {
+            id: "44c296e3-eb80-4ae9-beb3-d8b997c37d51",
+            misc: {
+              feedback: [null, null, null, null]
+            },
+            type: "choice",
+            options: {
+              flavor: "radio",
+              choices: choices,
+              type_display: "vertical"
+            },
+            meta: {
+              correct_answers: [1]
+            }
+          },
+          type: "ProblemMarker"
+        };
+        return JSON.stringify(problemMarker, null, 2);
+      }
+
+      // Исправление работы "Макароны" (предотвращение обновления страницы)
+      macaroniForm.addEventListener('submit', (e) => {
+        e.preventDefault(); // Предотвращает перезагрузку страницы
+
+        const leftText = macaroniForm['left'].value;
+        const rightText = macaroniForm['right'].value;
+        const answerText = macaroniForm['answer'].value;
+
+        const leftChoices = cleanChoices(leftText);
+        const rightChoices = cleanChoices(rightText);
+
+        const correctAnswers = answerText.match(/\(\d+,\d+\)/g).map(pair => pair.replace(/[()]/g, '').split(',').map(Number));
+
+        const { shuffledArray: shuffledRightChoices, newCorrectAnswers } = shuffleArrayAndUpdateAnswers(rightChoices, correctAnswers);
+
+        const quizMacaroni = {
+          content: {
+            id: "b463ccdc-715a-4dd8-9d2a-1257e9c06563",
+            question: "",
+            feedback: "",
+            button_text: "Проверить",
+            isPasted: true,
+            options: {
+              left: {
+                choices: leftChoices
+              },
+              right: {
+                choices: shuffledRightChoices
+              }
+            },
+            correct_answers: [newCorrectAnswers],
+            meta: {}
+          },
+          type: "QuizMacaroni"
+        };
+
+        macaroniResult.textContent = JSON.stringify(quizMacaroni, null, 2);
+        macaroniResultContainer.classList.remove('hidden');
+      });
+
+      macaroniCopyButton.addEventListener('click', () => {
+        const text = macaroniResult.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          showNotification('Результат скопирован в буфер обмена');
+        }, (err) => {
+          console.error('Ошибка при копировании: ', err);
+        });
+      });
+
+      function cleanChoices(text) {
+        return text.split('\n').map(line => line.trim()).filter(line => line);
+      }
+
+      function shuffleArrayAndUpdateAnswers(array, correctAnswers) {
+        const shuffledArray = [...array];
+        const newIndices = shuffledArray.map((_, index) => index);
+        for (let i = shuffledArray.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+          [newIndices[i], newIndices[j]] = [newIndices[j], newIndices[i]];
+        }
+        const newCorrectAnswers = correctAnswers.map(([leftIndex, rightIndex]) => [leftIndex, newIndices[rightIndex]]);
+        return { shuffledArray, newCorrectAnswers };
+      }
+
+      // Логика для автотестов
       const autotestsForm = document.getElementById('autotests-form');
       const autotestResult = document.getElementById('autotest-result');
       const autotestCopyButton = document.getElementById('autotest-copy-button');
