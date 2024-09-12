@@ -266,7 +266,7 @@
   </main>
 
   <footer>
-    <p>Авторы – <a href="https://t.me/novikovdenis" target="_blank">@novikovdenis</a> 😺 и ChatGPT 🤖 для Практикума с любовью</p>
+    <p>Авторы – <a href="https://t.me/novikovdenis" target="_blank">@novиковdenis</a> 😺 и ChatGPT 🤖 для Практикума с любовью</p>
   </footer>
   
   <div class="notification" id="notification">Результат скопирован в буфер обмена</div>
@@ -290,6 +290,7 @@
       const autotestsContainer = document.getElementById('autotests-container');
       const problemMarkerContainer = document.getElementById('problem-marker-container');
       const macaroniContainer = document.getElementById('macaroni-container');
+      const problemForm = document.getElementById('problem-form');
 
       // Переходы между разделами
       mathButton.addEventListener('click', () => {
@@ -322,6 +323,20 @@
       problemMarkerButton.addEventListener('click', () => {
         problemMarkerContainer.classList.remove('hidden');
         macaroniContainer.classList.add('hidden');
+      });
+
+      // Логика для отображения формы после нажатия на кнопки Одиночный/Множественный
+      const singleChoiceButton = document.getElementById('single-choice-button');
+      const multipleChoiceButton = document.getElementById('multiple-choice-button');
+
+      singleChoiceButton.addEventListener('click', () => {
+        problemForm.classList.remove('hidden');
+        document.getElementById('result-container').classList.remove('hidden');
+      });
+
+      multipleChoiceButton.addEventListener('click', () => {
+        problemForm.classList.remove('hidden');
+        document.getElementById('result-container').classList.remove('hidden');
       });
 
       // Логика для обработки текста и замены $ и $$ на {formula} и {formula|multiline|align:center}
