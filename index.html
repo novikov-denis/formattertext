@@ -339,6 +339,16 @@
         document.getElementById('result-container').classList.remove('hidden');
       });
 
+      // Логика для предотвращения обновления страницы при отправке формы
+      problemForm.addEventListener('submit', (e) => {
+        e.preventDefault(); // Предотвращаем перезагрузку страницы
+
+        // Здесь будет ваша логика для генерации кода
+        const text = problemForm['test-text'].value;
+        const formattedText = `Выбранный текст: ${text}`;  // Пример генерации кода
+        document.getElementById('test-result').textContent = formattedText;
+      });
+
       // Логика для обработки текста и замены $ и $$ на {formula} и {formula|multiline|align:center}
       mathForm.addEventListener('submit', (e) => {
         e.preventDefault();
