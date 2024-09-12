@@ -266,13 +266,13 @@
   </main>
 
   <footer>
-    <p>Авторы – <a href="https://t.me/novikovdenis" target="_blank">@novиковdenis</a> 😺 и ChatGPT 🤖 для Практикума с любовью</p>
+    <p>Авторы – <a href="https://t.me/novikovdenis" target="_blank">@novikovdenis</a> 😺 и ChatGPT 🤖 для Практикума с любовью</p>
   </footer>
   
   <div class="notification" id="notification">Результат скопирован в буфер обмена</div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+ document.addEventListener('DOMContentLoaded', () => {
   const mathForm = document.getElementById('math-form');
   const result = document.querySelector('.result');
   const dialogContainer = document.querySelector('.dialog-container');
@@ -280,6 +280,7 @@
   const copyButton = document.getElementById('copy-button');
   const copyDialogButton = document.getElementById('copy-dialog-button');
   const notification = document.getElementById('notification');
+  const welcomeNotification = document.getElementById('welcome-notification');
 
   const mathButton = document.getElementById('mathematics-button');
   const testsButton = document.getElementById('tests-button');
@@ -287,19 +288,29 @@
   const mathContainer = document.getElementById('mathematics-container');
   const testsContainer = document.getElementById('tests-container');
   const autotestsContainer = document.getElementById('autotests-container');
+
+  const problemMarkerButton = document.getElementById('problem-marker-button');
+  const macaroniButton = document.getElementById('macaroni-button');
   const problemMarkerContainer = document.getElementById('problem-marker-container');
-  const macaroniContainer = document.getElementById('macaroni-container');
+  const singleChoiceButton = document.getElementById('single-choice-button');
+  const multipleChoiceButton = document.getElementById('multiple-choice-button');
   const problemForm = document.getElementById('problem-form');
   const testResult = document.getElementById('test-result');
+  const testCopyButton = document.getElementById('test-copy-button');
   const resultContainer = document.getElementById('result-container');
+
+  const macaroniContainer = document.getElementById('macaroni-container');
   const macaroniForm = document.getElementById('macaroni-form');
   const macaroniResult = document.getElementById('macaroni-result');
+  const macaroniCopyButton = document.getElementById('macaroni-copy-button');
   const macaroniResultContainer = document.getElementById('macaroni-result-container');
+
   const autotestsForm = document.getElementById('autotests-form');
   const autotestResult = document.getElementById('autotest-result');
+  const autotestCopyButton = document.getElementById('autotest-copy-button');
+
   let currentFormat = 'single'; // Default format
 
-  // Переходы между разделами
   mathButton.addEventListener('click', () => {
     mathContainer.classList.remove('hidden');
     testsContainer.classList.add('hidden');
@@ -318,13 +329,11 @@
     testsContainer.classList.add('hidden');
   });
 
-  // Маркер Проблемы
   problemMarkerButton.addEventListener('click', () => {
     problemMarkerContainer.classList.remove('hidden');
     macaroniContainer.classList.add('hidden');
   });
 
-  // Макароны
   macaroniButton.addEventListener('click', () => {
     macaroniContainer.classList.remove('hidden');
     problemMarkerContainer.classList.add('hidden');
@@ -342,7 +351,10 @@
     resultContainer.classList.remove('hidden');
   });
 
-  // Форматирование Основного текста
+  document.addEventListener('DOMContentLoaded', () => {
+    showWelcomeNotification();
+  });
+
   mathForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const text = mathForm.text.value;
@@ -359,7 +371,6 @@
     }
   });
 
-  // Форматирование тестов для Маркера Проблемы
   problemForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const text = problemForm['test-text'].value;
@@ -367,7 +378,6 @@
     testResult.textContent = formattedText;
   });
 
-  // Форматирование Макаронов
   macaroniForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const leftText = macaroniForm['left'].value;
@@ -393,20 +403,19 @@
             choices: leftChoices
           },
           right: {
-             choices: shuffledRightChoices
-           }
+            choices: shuffledRightChoices
+          }
         },
         correct_answers: [newCorrectAnswers],
-         meta: {}
+        meta: {}
       },
       type: "QuizMacaroni"
-     };
+    };
 
     macaroniResult.textContent = JSON.stringify(macaroniResultObject, null, 2);
     macaroniResultContainer.classList.remove('hidden');
   });
 
-  // Форматирование Автотестов
   autotestsForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const tag = autotestsForm['tag'].value;
@@ -427,26 +436,65 @@ ${autotestCode}
     autotestResult.textContent = formattedResult;
   });
 
-  // Функции для работы с контентом
+  copyButton.addEventListener('click', () => {
+    const text = result.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      showNotification('Результат скопирован в буфер обмена');
+    }, (err) => {
+      console.error('Ошибка при копировании: ', err);
+    });
+  });
+
+  copyDialogButton.addEventListener('click', () => {
+    const text = dialogOutput.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      showNotification('Диалог скопирован в буфер обмена');
+    }, (err) => {
+      console.error('Ошибка при копировании: ', err);
+    });
+  });
+
+  testCopyButton.addEventListener('click', () => {
+    const text = testResult.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      showNotification('Результат скопирован в буфер обмена');
+    }, (err) => {
+      console.error('Ошибка при копировании: ', err);
+    });
+  });
+
+  macaroniCopyButton.addEventListener('click', () => {
+    const text = macaroniResult.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      showNotification('Результат скопирован в буфер обмена');
+    }, (err) => {
+      console.error('Ошибка при копировании: ', err);
+    });
+  });
+
+  autotestCopyButton.addEventListener('click', () => {
+    const text = autotestResult.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      showNotification('Результат скопирован в буфер обмена');
+    }, (err) => {
+      console.error('Ошибка при копировании: ', err);
+    });
+  });
+
   function cleanChoices(text) {
     return text.split('\n').map(line => line.trim()).filter(line => line);
   }
 
   function formatText(text) {
-    // Замена формата $$ на {formula|multiline|align:center}
-    const multilineFormulaRegex = /\$\$([\s\S]*?)\$\$/g;
-    text = text.replace(multilineFormulaRegex, (match, p1) => `{formula|multiline|align:center}\n${p1.trim()}\n{/formula}`);
-
-    // Замена формата $ на {formula}
-    const singleLineFormulaRegex = /\$(.*?)\$/g;
-    text = text.replace(singleLineFormulaRegex, (match, p1) => `{formula}${p1.trim()}{/formula}`);
+    const formulaRegex = /\$(.*?)\$/gs;
+    text = text.replace(formulaRegex, (match, p1) => `{formula}${p1}{/formula}`);
 
     const asideRegex = /<aside>\s*(.*?)\s*<\/aside>/gs;
     text = text.replace(asideRegex, (match, p1) => `{quiz-task}\n    background: |\n        #f5f6f7\n    content: |\n    ${p1}\n{/quiz-task}`);
-
+    
     const linkRegex = /https:\/\/code\.s3\.yandex\.net\/.*?\.html/g;
     text = text.replace(linkRegex, (match) => `{iframe:${match}|minHeight:580px|minWidth:764px}`);
-
+    
     return text;
   }
 
@@ -532,31 +580,19 @@ ${autotestCode}
     return { shuffledArray, newCorrectAnswers };
   }
 
-  // Уведомления
-  copyButton.addEventListener('click', () => {
-    const text = result.textContent;
-    navigator.clipboard.writeText(text).then(() => {
-      showNotification('Результат скопирован в буфер обмена');
-    }, (err) => {
-      console.error('Ошибка при копировании: ', err);
-    });
-  });
-
-  copyDialogButton.addEventListener('click', () => {
-    const text = dialogOutput.textContent;
-    navigator.clipboard.writeText(text).then(() => {
-      showNotification('Диалог скопирован в буфер обмена');
-    }, (err) => {
-      console.error('Ошибка при копировании: ', err);
-    });
-  });
-
   function showNotification(message) {
     notification.textContent = message;
-    notification.classList.add('show');
+    notification.style.display = 'block';
     setTimeout(() => {
-      notification.classList.remove('show');
+      notification.style.display = 'none';
     }, 3000);
+  }
+
+  function showWelcomeNotification() {
+    welcomeNotification.style.display = 'block';
+    setTimeout(() => {
+      welcomeNotification.style.display = 'none';
+    }, 8000);
   }
 });
 
