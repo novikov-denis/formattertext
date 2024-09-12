@@ -486,6 +486,9 @@ ${autotestCode}
   }
 
   function formatText(text) {
+    const multilineFormulaRegex = /\$\$([\s\S]*?)\$\$/g;
+    text = text.replace(multilineFormulaRegex, (match, p1) => `{formula|multiline|align:center}\n${p1.trim()}\n{/formula}`);
+    
     const formulaRegex = /\$(.*?)\$/gs;
     text = text.replace(formulaRegex, (match, p1) => `{formula}${p1}{/formula}`);
 
