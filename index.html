@@ -571,17 +571,29 @@ ${autotestCode}
     return JSON.stringify(problemMarker, null, 2);
   }
 
-  function shuffleArrayAndUpdateAnswers(array, correctAnswers) {
-    const shuffledArray = [...array];
-    const newIndices = shuffledArray.map((_, index) => index);
-    for (let i = shuffledArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
-      [newIndices[i], newIndices[j]] = [newIndices[j], newIndices[i]];
-    }
-    const newCorrectAnswers = correctAnswers.map(([leftIndex, rightIndex]) => [leftIndex, newIndices[rightIndex]]);
-    return { shuffledArray, newCorrectAnswers };
+function shuffleArrayAndUpdateAnswers(array, correctAnswers) {
+  const shuffledArray = [...array];
+  const newIndices = shuffledArray.map((_, index) => index);
+  
+  // Перемешиваем массив и индексы
+  for (let i = shuffledArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+    [newIndices[i], newIndices[j]] = [newIndices[j], newIndices[i]];
   }
+  
+  // Создаем отображение старых индексов в новые
+  const oldIndexToNewIndex = {};
+  for (let i = 0; i < newIndices.length; i++) {
+    oldIndexToNewIndex[newIndices[i]] = i;
+  }
+  
+  // Обновляем правильные ответы с помощью отображения
+  const newCorrectAnswers = correctAnswers.map(([leftIndex, rightIndex]) => [leftIndex, oldIndexToNewIndex[rightIndex]]);
+  
+  return { shuffledArray, newCorrectAnswers };
+}
+
 
   function showNotification(message) {
     notification.textContent = message;
